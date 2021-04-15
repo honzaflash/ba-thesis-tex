@@ -36,18 +36,10 @@
   main=english, %% By using `czech` or `slovak` as the main locale
                 %% instead of `english`, you can typeset the thesis
                 %% in either Czech or Slovak, respectively.
-  english, german, russian, czech, slovak %% The additional keys allow
+  czech         %% The additional keys allow
 ]{babel}        %% foreign texts to be typeset as follows:
 %%
-%%   \begin{otherlanguage}{german}  ... \end{otherlanguage}
-%%   \begin{otherlanguage}{russian} ... \end{otherlanguage}
 %%   \begin{otherlanguage}{czech}   ... \end{otherlanguage}
-%%   \begin{otherlanguage}{slovak}  ... \end{otherlanguage}
-%%
-%% For non-Latin scripts, it may be necessary to load additional
-%% fonts:
-\usepackage{paratype}
-\def\textrussian#1{{\usefont{T2A}{PTSerif-TLF}{m}{rm}#1}}
 %%
 %% The following section sets up the metadata of the thesis.
 \thesissetup{
@@ -55,13 +47,13 @@
     university  = mu,
     faculty     = fi,
     type        = bc,
-    author      = Jane Doe,
-    gender      = f,
-    advisor     = {Prof. RNDr. John Smith, CSc.},
-    title       = {The Proof of P = NP},
-    TeXtitle    = {The Proof of $\mathsf{P}=\mathsf{NP}$},
-    keywords    = {keyword1, keyword2, ...},
-    TeXkeywords = {keyword1, keyword2, \ldots},
+    author      = Jan Rychlý,
+    gender      = m,
+    advisor     = {doc. Mgr. Jan Obdržálek, PhD.},
+    title       = {Game development in Haskell},
+    % TeXtitle    = {Game development in Haskell},
+    keywords    = {Haskell, functional paradigm, game development, Apecs},
+    % TeXkeywords = {keyword1, keyword2, \ldots},
     abstract    = {%
       This is the abstract of my thesis, which can
 
@@ -103,37 +95,14 @@
 }
 \usepackage{floatrow} %% Putting captions above tables
 \floatsetup[table]{capposition=top}
+
+
 \begin{document}
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
 
-Theses are rumoured to be the capstones of education, so I decided
-to write one of my own. If all goes well, I will soon have a
-diploma under my belt. Wish me luck!
-
-\begin{otherlanguage}{czech}
-Říká se, že závěrečné práce jsou vyvrcholením studia a tak jsem se
-rozhodl jednu také napsat. Pokud vše půjde podle plánu, odnesu si
-na konci semestru diplom. Držte mi palce!
-\end{otherlanguage}
-
-\begin{otherlanguage}{slovak}
-Hovorí sa, že záverečné práce sú vyvrcholením štúdia a tak som sa
-rozhodol jednu tiež napísať. Ak všetko pôjde podľa plánu, odnesiem
-si na konci semestra diplom. Držte mi palce!
-\end{otherlanguage}
-
-\begin{otherlanguage}{german}
-Man munkelt, dass die Dissertation die Krönung der Ausbildung ist.
-Deshalb habe ich mich beschlossen meine eigene zu schreiben. Wenn
-alles gut geht, bekomme ich bald ein Diplom. Wünsch mir Glück!
-\end{otherlanguage}
-
-\begin{otherlanguage}{russian}\textrussian{%
-Говорят, что тезис -- это кульминация обучения. Поэтому я и решил
-написать собственный тезис. Если всё сработает по плану, я скоро
-получу диплом. Желайте мне удачи!
-}\end{otherlanguage}
+Haskell is very cool.
+Video games are very cool.
 
 \chapter{Using lightweight markup}
 \shorthandoff{-}
