@@ -1,0 +1,201 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% I, the copyright holder of this work, release this work into the
+%% public domain. This applies worldwide. In some countries this may
+%% not be legally possible; if so: I grant anyone the right to use
+%% this work for any purpose, without any conditions, unless such
+%% conditions are required by law.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[
+  digital, %% The `digital` option enables the default options for the
+           %% digital version of a document. Replace with `printed`
+           %% to enable the default options for the printed version
+           %% of a document.
+%%  color,   %% Uncomment these lines (by removing the %% at the
+%%           %% beginning) to use color in the digital version of your
+%%           %% document
+  table,   %% The `table` option causes the coloring of tables.
+           %% Replace with `notable` to restore plain LaTeX tables.
+  twoside, %% The `twoside` option enables double-sided typesetting.
+           %% Use at least 120 g/m² paper to prevent show-through.
+           %% Replace with `oneside` to use one-sided typesetting;
+           %% use only if you don’t have access to a double-sided
+           %% printer, or if one-sided typesetting is a formal
+           %% requirement at your faculty.
+  lof,     %% The `lof` option prints the List of Figures. Replace
+           %% with `nolof` to hide the List of Figures.
+  lot,     %% The `lot` option prints the List of Tables. Replace
+           %% with `nolot` to hide the List of Tables.
+  %% More options are listed in the user guide at
+  %% <http://mirrors.ctan.org/macros/latex/contrib/fithesis/guide/mu/fi.pdf>.
+]{fithesis3}
+%% The following section sets up the locales used in the thesis.
+\usepackage[resetfonts]{cmap} %% We need to load the T2A font encoding
+\usepackage[T1,T2A]{fontenc}  %% to use the Cyrillic fonts with Russian texts.
+\usepackage[
+  main=english, %% By using `czech` or `slovak` as the main locale
+                %% instead of `english`, you can typeset the thesis
+                %% in either Czech or Slovak, respectively.
+  czech         %% The additional keys allow
+]{babel}        %% foreign texts to be typeset as follows:
+%%
+%%   \begin{otherlanguage}{czech}   ... \end{otherlanguage}
+%%
+%% The following section sets up the metadata of the thesis.
+\thesissetup{
+    date        = \the\year/\the\month/\the\day,
+    university  = mu,
+    faculty     = fi,
+    type        = bc,
+    author      = Jan Rychlý,
+    gender      = m,
+    advisor     = {doc. Mgr. Jan Obdržálek, PhD.},
+    title       = {Game development in Haskell},
+    % TeXtitle    = {Game development in Haskell},
+    keywords    = {Haskell, functional paradigm, game development, Apecs},
+    % TeXkeywords = {keyword1, keyword2, \ldots},
+    abstract    = {%
+      This is the abstract of my thesis, which can
+
+      span multiple paragraphs.
+    },
+    thanks      = {%
+      These are the acknowledgements for my thesis, which can
+
+      span multiple paragraphs.
+    },
+    bib         = bibliography.bib,
+    %% Uncomment the following line (by removing the %% at the
+    %% beginning) and replace `assignment.pdf` with the filename
+    %% of your scanned thesis assignment.
+%%    assignment         = assignment.pdf,
+}
+\usepackage{makeidx}      %% The `makeidx` package contains
+\makeindex                %% helper commands for index typesetting.
+%% These additional packages are used within the document:
+\usepackage{paralist} %% Compact list environments
+\usepackage{amsmath}  %% Mathematics
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{url}      %% Hyperlinks
+\usepackage{markdown} %% Lightweight markup
+\usepackage{tabularx} %% Tables
+\usepackage{tabu}
+\usepackage{booktabs}
+\usepackage{listings} %% Source code highlighting
+\lstset{
+  basicstyle      = \ttfamily,
+  identifierstyle = \color{black},
+  keywordstyle    = \color{blue},
+  keywordstyle    = {[2]\color{cyan}},
+  keywordstyle    = {[3]\color{olive}},
+  stringstyle     = \color{teal},
+  commentstyle    = \itshape\color{magenta},
+  breaklines      = true,
+}
+\usepackage{floatrow} %% Putting captions above tables
+\floatsetup[table]{capposition=top}
+
+% C++ macro
+\newcommand{\cpp}{C\nolinebreak\texttt{+}\nolinebreak\texttt{+}}
+
+
+
+\begin{document}
+% 4/22/2021 - the introduction chapter as homework for the writing seminar
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+
+Video games are a special kind of application that many consider an art form
+and rewarding to develop. However, they generally involve a complex system
+with a non-trivial state, a certain amount of pseudo-randomness,
+and user/player input handling. This makes for non-deterministic
+programs that are usually incredibly difficult to test efficiently.
+
+Conversely, functional programming strives to eliminate
+mutable state and make code more deterministic, which allows for
+programs to be safer and easier to test.
+These and other benefits have naturally led to people
+trying out game development in functional languages, but
+it remains mostly a matter of passion projects.
+That said, even though the vast majority of the video game industry
+still uses imperative languages like \cpp{}, the communities
+\emph{are} very active, and there are hundreds of games,
+blog posts, and libraries that help with
+game programming in functional languages.
+
+The focus of this thesis narrows down to exploring game development
+in Haskell in the context of small-scale 2D games. The goal is
+to give an overview of the process, then compare this approach
+to a more conventional and imperative one
+and ultimately highlight the features of Haskell that are beneficial
+and those that become hurdles in the context of programming a video game.
+
+This is done through reimplementing a single game with an already existing
+imperative implementation in Haskell,
+first using the Apecs\footfullcite{apecsrepo} library
+and for a second time without it. After a further discussion
+about chosen technologies in the following chapter,
+said three implementations are described and analyzed
+in chapters 2, 3, and 4. Then they are more closely compared
+and the pros and cons of Haskell in game development are
+evaluated and demonstrated in chapter 5.
+
+We find that the Apecs library makes developing games
+in Haskell much more approachable. On the other hand
+it goes against the functional philosophy, and using it
+will generally result in very imperative code wrapped in monads
+that lacks the expressiveness and apparent safeness of regular Haskell.
+Yet, from the second reimplementation, we learn that
+some use of monads is beneficial, and it makes the code cleaner
+and more elegant. In both cases, the development was
+mostly a smooth experience without a single major hick-up,
+unlike what often happens when dealing with a \cpp{} compiler.
+Furthermore, from our small scale example,
+it appears that a more "pure" architecture allows for parallel
+computation resulting in better performance
+than an Entity Component System like Apecs or the one
+inside of Unity\footnotemark.
+
+\footnotetext{
+Disclaimer: this is only my incomplete guess of the results,
+the thesis is not yet finished.
+}
+
+
+\chapter{The conflict of functional paradigm and video games}
+
+
+\chapter{Implementing Atari Asteroids using the Apecs library}
+
+
+\chapter{Implementing Atari Asteroids without using the Apecs library}
+
+
+\chapter{Analyzing Atari Asteroids implementation written in C\#}
+
+
+\chapter{Comparing the implementations}
+
+
+
+\chapter*{Conclusion}
+\addcontentsline{toc}{chapter}{Conclusion}
+
+
+
+
+\printbibliography[heading=bibintoc] %% Print the bibliography.
+
+
+\makeatletter\thesis@blocks@clear\makeatother
+\phantomsection %% Print the index and insert it into the
+\addcontentsline{toc}{chapter}{\indexname}
+\printindex
+
+
+\appendix %% Start the appendices.
+\chapter{An appendix}
+Here you can insert the appendices of your thesis.
+
+\end{document}
