@@ -83,28 +83,39 @@
 \usepackage{tabu}
 \usepackage{booktabs}
 \usepackage{listings} %% Source code highlighting
-\lstset{
-  basicstyle      = \ttfamily,
-  identifierstyle = \color{black},
-  keywordstyle    = \color{blue},
-  keywordstyle    = {[2]\color{cyan}},
-  keywordstyle    = {[3]\color{olive}},
-  stringstyle     = \color{teal},
-  commentstyle    = \itshape\color{magenta},
-  breaklines      = true,
-}
+% \lstset{
+%   basicstyle      = \ttfamily,
+%   identifierstyle = \color{black},
+%   keywordstyle    = \color{blue},
+%   keywordstyle    = {[2]\color{cyan}},
+%   keywordstyle    = {[3]\color{olive}},
+%   stringstyle     = \color{teal},
+%   commentstyle    = \itshape\color{magenta},
+%   breaklines      = true,
+%   language         = Haskell,
+%   otherkeywords=
+% }
+
+\usepackage[newfloat]{minted} %% more source code highlighting
+\usemintedstyle{vs}
+
 \usepackage{floatrow} %% Putting captions above tables
 \floatsetup[table]{capposition=top}
 
+
 % C++ macro
 \newcommand{\cpp}{C\nolinebreak\texttt{+}\nolinebreak\texttt{+}}
-
+% code listing macros
+\newminted[haskell]{haskell}{}
+\newmintinline[inlinehs]{haskell}{}
 
 
 \begin{document}
-% 4/22/2021 - the introduction chapter as homework for the writing seminar
+
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
+
+// introduction draft written for the VB000 assignment
 
 Video games are a special kind of application that many consider an art form
 and rewarding to develop. However, they generally involve a complex system
@@ -151,31 +162,388 @@ some use of monads is beneficial, and it makes the code cleaner
 and more elegant. In both cases, the development was
 mostly a smooth experience without a single major hick-up,
 unlike what often happens when dealing with a \cpp{} compiler.
-Furthermore, from our small scale example,
-it appears that a more "pure" architecture allows for parallel
-computation resulting in better performance
-than an Entity Component System like Apecs or the one
-inside of Unity\footnotemark.
 
-\footnotetext{
-Disclaimer: this is only my incomplete guess of the results,
-the thesis is not yet finished.
+
+
+\chapter{Motivation and used methods}
+
+\section{Why functional programming matters}
+// referencing the John Hughes' paper, general
+benefits of functional paradigm \\
+\url{https://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf}
+
+\subsection{Game development specific challenges}
+
+\subsection{Existing work}
+
+\section{Asteroids by Atari as an example}
+
+\section{Rendering and interfacing with the OS}
+// SDL2 and other existing Haskell libraries, why I chose SDL2
+
+
+% ====================================
+% CHAPTER 2 - About Apecs
+% ====================================
+\chapter{Using the Apecs library \textemdash{} hAsteroids}
+
+\section{About Apecs}
+Many libraries for game programming in Haskell have come out over the years.
+One of the more recent ones is Apecs — "a fast, type-driven
+Entity\textendash{}Component\textendash{}System library for game programming."\cite{apecsrepo}
+Entity\textendash{}Component\textendash{}System (or ECS) is a data-oriented architectural pattern often
+used in video game engines. It provides better performance
+by increasing data locality. Instead of the object-oriented pattern
+where data is grouped by their related \textbf{entity}/object, in ECS
+, we group pieces of data by their character and call them \textbf{components}.
+Simply put, we exchange an array of structures for a structure of arrays.
+That way, when running functions — which define a \textbf{system} — on entities
+every frame of the game, we iterate only over the arrays of components
+we need for the system rather than iterating over a much
+larger data set of whole objects as it would be in the object-oriented paradigm.
+Typical example of a system would be updating positions of all entities
+based on their velocity regardless of whether that entity is a player,
+projectile or a falling anvil.
+
+[https://medium.com/ingeniouslysimple/entities-components-and-systems-89c31464240d]
+
+And since both Unity and Unreal engine use Entity-Component design,
+we chose Apecs as the current state-of-the-art Haskell library
+for the traction it has received in the community despite
+it not being the only ECS library in existence\footnote{
+The making of Ecstasy was actually inspired by author's issues with Apecs. \\
+\url{https://reasonablypolymorphic.com/blog/why-take-ecstasy/}
+}.
+
+\begin{listing}
+\label{lst:component}
+\caption{Defining instance for \lstinline{Component}}
+\begin{haskell}
+newtype Position = Position (V2 Double)
+instance Component Position where
+    type Storage Position = Map Position
+\end{haskell}
+\end{listing}
+
+To define a component in Apecs means to define an instance of the class \inlinehs{Component},
+as we see in the \ref{lst:component}.
+The \inlinehs{Component} class
+requires us to state how we want to store the given component
+by assigning a type alias to the specific storage type.
+We can define our \inlinehs{Stores} or use one of those provided
+with the library: \inlinehs{Map}, \inlinehs{Unique}, \inlinehs{Global}.
+With \inlinehs{Map}, there can be multiple components of that type,
+each belonging to a particular entity.
+With \inlinehs{Unique}, at most one component may exist
+belonging to a particular entity. Furthermore,
+with \inlinehs{Global}, at most one component instance can exist,
+and it belongs to the special \emph{global} entity together
+with every other entity. Finally, we call \inlinehs{makeWorld},
+which uses Template Haskell to generate \inlinehs{World} product type
+along with \inlinehs{initWorld} function and instances of the \inlinehs{Has}
+class needed for altering contents of \inlinehs{World} through
+the other functions in Apecs. The resulting \inlinehs{World}
+may look close to something as shown in listing \ref{lst:world}.
+
+\begin{listing}
+\label{lst:world}
+\caption{Simplified world state type example}
+\begin{minted}{haskell}
+data World =
+    World
+    { record1 :: !(Unique Player)
+    , record2 :: !(Map Enemy)
+    , record3 :: !(Map Bullet)
+    , record4 :: !(Map Position)
+    , record5 :: !(Global Time)
+    }
+\end{minted}
+\end{listing}
+
+Having components, we need a way to run systems. In Apecs,
+the \inlinehs{SystemT} monad transformer is where changes to the world happen.
+Therefore any "system" in the ECS sense must be a function returning \inlinehs{SystemT w m a}.
+One such "micro-system" is the \inlinehs{newEntity} function.
+It accepts a tuple of components and adds them into
+their records — the new entity itself is defined by the components stored under its ID.
+\begin{minted}{haskell}
+newEntity (Ship $ pi / 2 * 3, Position $ V2 x y, Velocity $ V2 0 0)
+\end{minted}
+Another noteworthy functions to build systems are the component map functions
+shown in the listing \ref{lst:cmaps}. They are the means of altering the world state.
+
+\begin{listing}
+\label{lst:cmaps}
+\caption{Component maps definitions}
+\begin{minted}{haskell}
+-- | Maps a function over all entities with a cx, and writes their cy.
+cmap :: forall w m cx cy. (Get w m cx, Members w m cx, Set w m cy) => (cx -> cy) -> SystemT w m ()
+
+-- | Monadically iterates over all entities with a cx, and writes their cy.
+cmapM :: forall w m cx cy. (Get w m cx, Set w m cy, Members w m cx) => (cx -> SystemT w m cy) -> SystemT w m ()
+
+-- | Monadically iterates over all entities with a cx
+cmapM_ :: forall w m c. (Get w m c, Members w m c) => (c -> SystemT w m ()) -> SystemT w m ()
+\end{minted}
+\end{listing}
+
+[[https://hackage.haskell.org/package/apecs-0.9.2/docs/Apecs.html](https://hackage.haskell.org/package/apecs-0.9.2/docs/Apecs.html)] - probably simplify the types with an asterisk
+
+\inlinehs{cmap} accepts a function that takes a tuple of components
+and returns some other tuple of components. It internally iterates
+over entities with at least those components matching the mapped
+function's input tuple and writes the output tuple components
+to those entities. \inlinehs{cmapM} works similarly
+only as its name suggests the mapped function returns the component
+tuple wrapped in the system monad, which allows it to execute side effects.
+And with \inlinehs{cmaM_} there is no direct writing, only side effects.
+
+
+
+\section{Writing of hAsteroids}
+To familiarize our selves further with the library and with the process
+of using it for its main purpose — creating games in Haskell — we did exactly so.
+
+Module structure of the project looks roughly as shown in [Fig. X]
+![img](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/45929532-7c55-4c74-ba20-41c18c5eb50b/modules.png)
+Fig. X - Upper modules may have direct dependencies on the lower modules, arrows show most of the important ones.
+
+The core of the game's design is the components,
+as they form the primary data structure acting as the state.
+There are more approaches to designing them, but in hAsteroids,
+we have three categories of components: marker components,
+shared components, and control components. Marker components serve two purposes:
+they contain information that is unique for a given type of game object,
+and that way, they also mark an entity as that object.
+Shared components include characteristics that are shared by more types
+of game objects like position. Lastly, control components are all global
+and are used in one way or another to control the run of the game.
+hAsteroids has one \inlinehs{Unique} marker component called \inlinehs{Ship},
+which marks an entity representing the player's ship and stores
+the angle of the direction the ship is facing. The three other marker
+components are \inlinehs{Map} stored. They are \inlinehs{Asteroid} — holding
+asteroid size — \inlinehs{Ufo} — holding saucer size and a countdown
+to the next UFO's shot being fired — and \inlinehs{Bullet} — storing whether
+the player or a UFO shot it. Next, there are the shared components
+\inlinehs{Position}, \inlinehs{Velocity} and \inlinehs{TimeToLive}
+and several \inlinehs{Global} control ones like \inlinehs{ShipLives},
+\inlinehs{ShipState}, \inlinehs{GameLoopState}, \inlinehs{WaveTime} and few others.
+[]Fig. X] shows which entity types have which components.
+
+Ship - Ship, Position, Velocity
+
+UFO - Ufo, TimeToLive, Position, Velocity
+
+Bullet - Bullet, TimeToLive, Position, Velocity
+
+Asteroid - Asteroid, Position, Velocity
+
+Now, the \inlinehs{main} function is the entry point of the program. It first initializes
+the SDL libraries and then creates a window and a renderer. Next, using \inlinehs{loadResources},
+it loads object textures into a hash map, prerenders fonts saving them into another
+hash map and wraps it all together with the renderer and a few stateful random generators
+into one product type called \inlinehs{Resources}. Then the game world with our
+components is created by calling \inlinehs{initWorld}, and together with resources,
+they are passed to \inlinehs{gameLoop} through a stack
+of Reader monad transformers (\inlinehs{SystemWithResources}).
+
+\inlinehs{gameLoop} is one compound system responsible for updating and drawing
+the world and the menus, and it loops until the player quits the game.
+It also measures the time every frame and calls \inlinehs{SDL.Delay} if it was
+updated and drawn too quickly for the targeted 60 FPS. World updating is split
+into two functions: \inlinehs{reactToInput} and \inlinehs{stepScene}.
+The scene (a menu or the world) is then drawn by \inlinehs{drawScene}.
+
+\inlinehs{reactToInput} manages the state of the input, and as its name suggests,
+it reacts to it. Depending on the global \inlinehs{GameLoopState} component,
+it either transitions between the states (\inlinehs{InMenu}, \inlinehs{Playing},
+\inlinehs{Paused}, \inlinehs{GameOver}, \inlinehs{Quit}) or
+when in the \inlinehs{Playing} state, it also allows the player to control the ship.
+That is done by a \inlinehs{cmapM} call with a lambda that changes the angle of the ship,
+increases its velocity or creates a new bullet entity — all conditioned by the input state.
+
+\inlinehs{stepScene} takes care of simulating physics and game rules
+over time when the loop is in the \inlinehs{Playing} state.
+This is divided into multiple function calls:
+\begin{itemize}[-]
+    
+    \item  \inlinehs{cmap \$ stepKinetics dT}
+
+    iterates over all entities and adds their velocity vector multiplied
+    by time \inlinehs{dT} to their position vector and also takes care
+    of wrapping the space — if an entity flies out of the screen on one side,
+    it comes back in from the other side;
+
+    \item \inlinehs{cmap \$ decelerateShip dT}
+
+    simply applies deceleration to the ship by scaling down its velocity vector slightly;
+
+    \item \inlinehs{cmapM \$ stepShipState dT}
+
+    is responsible for transitioning between ship states
+    (\inlinehs{Alive}, \inlinehs{Exploding Int}, \inlinehs{Respawning Int}
+    where the integers serve as countdown timers for the state transition)
+    and the "explosion animation";
+
+    \item \inlinehs{cmapM_ \$ ufosShoot dT}
+
+    iterates over all \inlinehs{Ufo} components decrementing the time to
+    shoot and when it reaches 0, it creates a new \inlinehs{Bullet}.
+    The algorithm for finding a shooting direction is different for the two UFO sizes.
+    Small UFOs are more accurate because the algorithm uses
+    the law of sines to calculate the bullet trajectory based on the ship's current
+    position and velocity. Large UFOs shoot in quarter of $\pi$ increments
+    towards the ship's current location.
+
+    \item \inlinehs{awardLifeIf10000}
+
+    For reaching every 10000 score points ship lives are incremented by 1.
+
+    \item a lambda incrementing \inlinehs{WaveTime}
+
+    Simply adds the frame delta time \inlinehs{dT} to the wave time counter.
+
+    \item \inlinehs{spawnUfos}
+
+    Randomly creates new UFO entities on the left side of the screen,
+    with the chances increasing as the time spent in one wave (\inlinehs{WaveTime}) passes.
+
+    \item \inlinehs{spawnNewAsteroidWaveIfCleared}
+
+    uses \inlinehs{cfold} from Apecs to count all asteroids and
+    when there are none it starts counting up using the \inlinehs{WavePauseTimer}.
+    When the timer reaches 1500 it calls \inlinehs{spawnNewAsteroidWave}
+    from the \inlinehs{Initialize} module, which uses the random stateful
+    generators from the \inlinehs{WithResources} reader monad to create new asteroids.
+
+    \item a lambda decrementing all \inlinehs{TimeToLive} components
+
+    Simply subtracts the frame delta time \inlinehs{dT} from all the time to live components.
+
+    \item \inlinehs{destroyDeadBullets} and \inlinehs{destroyDeadUfos}
+
+    use \inlinehs{cmapM_} to destroy all the components for entities that run out of "time to live."
+
+    \item \inlinehs{detectAndHandleCollisions}
+
+    Collision handling has its own module — \inlinehs{Collisions}.
+    There the collisions are detected and handled individually between each
+    entity group. The general idea is that we use \inlinehs{cmapM_} inside of \inlinehs{cmapM_}
+    as an equivalent of nested for loops. This way, for every asteroid,
+    we iterate (or map) over all the other entities, checking for collision.
+    We do the similar for the rest of the combination pairs,
+    using in total $\binom{6}{2} = 6$ algorithms. All the collisions are detected
+    simply as a question of "is a point or any of the points inside of a rectangle,
+    an ellipse or a circle." A detected collision always results in some effect
+    — the colliding entities are removed, except an asteroid may break into two
+    smaller ones if it is not already the smallest size, and
+    in the case of the ship, one life is subtracted.
+
+\end{itemize}
+
+Once the scene is stepped, it is drawn by the already mentioned \inlinehs{drawScene}
+function from the \inlinehs{Draw} module. If the loop state is \inlinehs{InMenu} or
+\inlinehs{GameOver} only text is drawn on a cleared black screen. That is done by
+\inlinehs{drawCenteredTexts}, which only calls a monadic \inlinehs{zipWith} with
+\inlinehs{drawCenteredText} on a list of y coordinates and a list of text keys.
+\inlinehs{drawCenteredText} itself then looks up the text texture in the
+hash map that is part of the \inlinehs{WithResources} environment,
+queries its width and finally calls \inlinehs{drawText} with the coordinates
+for the texture to be drawn centered.
+
+When the loop is in the \inlinehs{Paused} state, there is text being drawn
+as well as the world. Moreover, when the state is \inlinehs{Playing},
+only the world is drawn. This is taken care of by \inlinehs{drawWorld},
+which calls functions to draw the background, entities and the UI
+(number of lives and the score). Entities are drawn using \inlinehs{cmapM_}
+with a lambda and a wrapper function around the \inlinehs{SDL.copy} and
+\inlinehs{SDL.copyEx}, which copy the texture to the rendering target.
+
+maybe a footnote - \url{https://wiki.libsdl.org/SDL_RenderCopy](https://wiki.libsdl.org/SDL_RenderCopy)}
+is what SDL.Copy is binding to
+
+
+
+\section{Reflection}
+From this example alone, we learn several valuable lessons right away.
+First, Apecs makes game programming in Haskell relatively accessible.
+Once we understand the ECS principle, every world modification is
+"intuitively imperative" thanks to the \inlinehs{System} monad and
+the component map functions. Any system side effects can be added
+to an existing \inlinehs{cmap f} call with a simple change of the return types.
+\begin{minted}{haskell}
+-- steer and thrust
+handleInput input =
+    cmap \$ \(Ship a, Velocity vel) ->
+               ( Ship \$ a + steering input
+               , Velocity \$ vel + thrust input a
+               )
+-- we realized that we also want to be able to pause the game
+handleInput' input =
+    cmapM \$ \(Ship a, Velocity vel) -> do
+                when (wasPressed input escapeKeycode) (set global Paused)
+                pure ( Ship \$ a + steering input
+                     , Velocity \$ vel + thrust input a
+                     )
+\end{minted}
+
+Moreover, the \inlinehs{WithResources} reader monad provides easy
+access to resources without having to pass them along everywhere as a function argument.
+
+Not less important is the fact that the game works.
+The development experience was smooth, with no major hick-ups.
+Because Haskell is a statically-typed high-level language, there is
+no reason to worry about random invalid memory access making our game crash,
+and everything is type-safe.
+
+However, this approach is far from perfect. Handling collisions on an
+individual basis would scale very poorly, so some universal interface would be better.
+This could be achieved by defining a class and its instances for the marker components.
+More polymorphism could also differentiate functions that require the
+\inlinehs{System} monad, the \inlinehs{WithResources} monad or both.
+In the current state, there are many functions, such as \inlinehs{reactToInput},
+which do not use the resources but still have access to them since
+everything returns the transformed \inlinehs{SystemWithResources} monad
+that has \inlinehs{WithResources} inside of it. Furthermore,
+said monad transformer stack\footnote{
+\inlinehs{type SystemWithResources = SystemT World (ReaderT Resources IO)}
+where \inlinehs{SystemT} is only a \inlinehs{newtype}
+around \inlinehs{ReaderT} defined in Apecs
 }
+includes \inlinehs{IO}, so any function with this type can perform
+input or output effects, which goes against functional purity and nullifies
+many of the reasons why one would choose Haskell as a language in the first place.
+
+Another issue we observe is partially tied to the nature of ECS — there
+is no way to destroy all entity's components automatically in Apecs.
+One has to do destroy them explicitly. That way, nothing protects us
+from accidentally adding a component to an entity that will never be destroyed.
+This could be mitigated by creating helper functions for entity creation and destruction.
+
+Overall, because Apecs is so powerful, it makes it easy for the programmer to rely
+on it too much and produce code that does not reach all the potential
+benefits purely functional programming has to offer.
 
 
-\chapter{The conflict of functional paradigm and video games}
+
+\chapter{Focusing on functional purity - pure-asteroids}
+
+\section{Game engines in purely functional style}
+// refferencing John Carmack's keynote at Quakecon 2013,
+discussing its benefits, maybe mentioning \url{https://indigoengine.io/}
+
+\section{Writing of pure-asteroids}
+
+\section{Reflection}
+// sort of a immediate reflection
 
 
-\chapter{Implementing Atari Asteroids using the Apecs library}
 
+\chapter{Analyzing an existing \cpp{} implementation}
+// explaining a bit about the choice of the particular implementation
+and analyzing it, again with a "reflection" part
 
-\chapter{Implementing Atari Asteroids without using the Apecs library}
-
-
-\chapter{Analyzing Atari Asteroids implementation written in C\#}
-
-
-\chapter{Comparing the implementations}
+\chapter{Comparing the approaches}
 
 
 
