@@ -11,17 +11,18 @@
            %% digital version of a document. Replace with `printed`
            %% to enable the default options for the printed version
            %% of a document.
-%%  color,   %% Uncomment these lines (by removing the %% at the
-%%           %% beginning) to use color in the digital version of your
-%%           %% document
+  color,   %% Uncomment these lines (by removing the %% at the
+           %% beginning) to use color in the digital version of your
+           %% document
   table,   %% The `table` option causes the coloring of tables.
            %% Replace with `notable` to restore plain LaTeX tables.
-  twoside, %% The `twoside` option enables double-sided typesetting.
+  %twoside, %% The `twoside` option enables double-sided typesetting.
            %% Use at least 120 g/m² paper to prevent show-through.
            %% Replace with `oneside` to use one-sided typesetting;
            %% use only if you don’t have access to a double-sided
            %% printer, or if one-sided typesetting is a formal
            %% requirement at your faculty.
+  oneside, % temp for digital version
   lof,     %% The `lof` option prints the List of Figures. Replace
            %% with `nolof` to hide the List of Figures.
   lot,     %% The `lot` option prints the List of Tables. Replace
@@ -112,6 +113,10 @@
 
 \begin{document}
 
+
+% ====================================
+% Introduction
+% ====================================
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
 
@@ -165,21 +170,99 @@ unlike what often happens when dealing with a \cpp{} compiler.
 
 
 
+
+% ====================================
+% CHAPTER 1 - Deeper introduction
+% ====================================
 \chapter{Motivation and used methods}
 
-\section{Why functional programming matters}
-// referencing the John Hughes' paper, general
-benefits of functional paradigm \\
-\url{https://www.cs.kent.ac.uk/people/staff/dat/miranda/whyfp90.pdf}
 
-\subsection{Game development specific challenges}
+\section{Why functional programming matters}
+
+Functional languages are a subset of declarative languages, where the
+programmer states "what" instead of "how". Unlike in imperative languages,
+we \emph{declare} what we want a program to return by combining functions (other declarations)
+instead of giving the computer serialized instructions (\emph{imperatives}).
+That is manifested in the lack of assignment statements and lesser control structures.
+What sounds like a bug is actually a feature --- once variables are assigned
+their value, it can't be changed, and the burden of prescribing the flow of control
+is removed\cite{whyfpmatters}. Moreover, a pure function has no side effects
+and its return value depends solely on its arguments. This makes for deterministic
+programs that are easier to test, debug and argue about their correctness.
+
+John Hughes describes the key benefits of functional paradigm in his paper
+\emph{Why Functional Programming Matters}\cite{whyfpmatters}. He first
+explains how modularity of code is clearly very important, since
+separate modules are easier to write and test and then proceeds
+to show how functional programming increases modularity
+through higher-order functions and lazy evaluation, demonstrating
+their importance on several examples.
+
+Additionally, Haskell is a purely functional programming language that
+is also \emph{strongly typed}. This means that one
+doesn't need to worry about memory errors causing crashes because
+everything is caught by the type-checker during compilation.
+The types also serve as documentation and can help greatly
+with writing and understanding code. On the other hand
+types can also be inferred by the compiler so it
+is not necessary to explicitly declare the type of everything.
+Furthermore the type system allows extensive user-defined data types,
+which makes the code even more expressive.
+All of this potentially increases productivity of a functional programmer even further.
+
+
+\subsection{Game development specifics}
+Functional languages are great tools but we know that not every tool is
+fit for every job. One of the consequences of the functional purity is
+that the state of the program has to be modeled explicitly as an argument
+and is therefore immutable. There are monads that help us abstract
+from this but the monads themselves are in a way still an explicit work around.
+
+Conversely, games are real-time, interactive applications simulating
+often very complex systems and hold a non-trivial state that is
+updated many times a second. Such state generally involves a representation
+of the game world with all the objects existing in it, their properties and flags,
+the current state of the input devices and many other variables. Since its beginning,
+the video game industry has been dominated by imperative languages,
+that make it easy to model a game world and alter it globally through
+references and side effects inside of decomposed functions. And because
+of their established position, there is a plethora of libraries and game engines
+with supporting documentation and tutorials. Besides, a company will most likely
+have no problem finding skilled \cpp{} programmers with interest
+in the game industry, where as finding their functional counterparts
+might be much harder. Additionally, in the case of \cpp{} the performance
+also fits the requirements of large games.
+
+However, it does come with a price --- modules of such programs may be
+more dependent and entangled, which makes the whole less flexible and with
+implicit state more prone to bugs and harder to test and debug.
+That is, while testing is already a large issue due to the nature of video games.
+Automated testing is not sufficient and companies have to hire teams
+of game testers to test games manually. And in terms of high performance,
+which is generally connected to lower-level languages, developers must
+wrestle with the lower-level nature, producing problems as well.
+
+We can see that video games, like any other software, could benefit from
+purely functional design, provided that we are able to model the
+game state efficiently enough. Another consideration in the real world
+are the available frameworks and whether the cost of potential
+pioneering is worth to us.
+
 
 \subsection{Existing work}
+Indeed, people have tried developing games in Haskell and a decent
+progress has been made over the years. There are libraries like ...\\
+Also games that were published commercially and non-commercially ...\\
+... blog posts like the one by John Vargas (Dino Rush), ?reddit activity?,
+talks given in the past, Yampa by Keera Studios, elerea,
+Chucklefish's new game engine ?Cove?, Indigo in Scala
 
 \section{Asteroids by Atari as an example}
+simple example with enough interesting world
+but not too complex for the scope of a ba thesis
 
 \section{Rendering and interfacing with the OS}
-// SDL2 and other existing Haskell libraries, why I chose SDL2
+SDL2 and other existing Haskell libraries, why I chose SDL2
 
 
 % ====================================
@@ -274,7 +357,7 @@ shown in the listing \ref{lst:cmaps}. They are the means of altering the world s
 
 \begin{listing}
 \label{lst:cmaps}
-\caption{Component maps definitions}
+\caption{Component maps documentation}
 \begin{minted}{haskell}
 -- | Maps a function over all entities with a cx, and writes their cy.
 cmap :: forall w m cx cy. (Get w m cx, Members w m cx, Set w m cy) => (cx -> cy) -> SystemT w m ()
