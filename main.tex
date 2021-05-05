@@ -1,11 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% I, the copyright holder of this work, release this work into the
-%% public domain. This applies worldwide. In some countries this may
-%% not be legally possible; if so: I grant anyone the right to use
-%% this work for any purpose, without any conditions, unless such
-%% conditions are required by law.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \documentclass[
   digital, %% The `digital` option enables the default options for the
            %% digital version of a document. Replace with `printed`
@@ -83,22 +75,10 @@
 \usepackage{tabularx} %% Tables
 \usepackage{tabu}
 \usepackage{booktabs}
-\usepackage{listings} %% Source code highlighting
-% \lstset{
-%   basicstyle      = \ttfamily,
-%   identifierstyle = \color{black},
-%   keywordstyle    = \color{blue},
-%   keywordstyle    = {[2]\color{cyan}},
-%   keywordstyle    = {[3]\color{olive}},
-%   stringstyle     = \color{teal},
-%   commentstyle    = \itshape\color{magenta},
-%   breaklines      = true,
-%   language         = Haskell,
-%   otherkeywords=
-% }
 
-\usepackage[newfloat]{minted} %% more source code highlighting
+\usepackage[newfloat, chapter]{minted} %% source code highlighting
 \usemintedstyle{vs}
+\usepackage{xcolor}
 
 \usepackage{floatrow} %% Putting captions above tables
 \floatsetup[table]{capposition=top}
@@ -107,8 +87,15 @@
 % C++ macro
 \newcommand{\cpp}{C\nolinebreak\texttt{+}\nolinebreak\texttt{+}}
 % code listing macros
-\newminted[haskell]{haskell}{}
+\definecolor{haskellbg}{rgb}{0.95,0.95,0.96}
+\newminted[haskell]{haskell}{
+    % frame = leftline,
+    % bgcolor = haskellbg
+}
 \newmintinline[inlinehs]{haskell}{}
+
+\newcommand{\packagename}{\mintinline{Haskell}}
+
 
 
 \begin{document}
@@ -119,6 +106,7 @@
 % ====================================
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
+\label{chptr:introduction}
 
 // introduction draft written for the VB000 assignment
 
@@ -178,6 +166,7 @@ unlike what often happens when dealing with a \cpp{} compiler.
 
 
 \section{Why functional programming matters}
+\label{sect:whyfpmatters}
 
 Functional languages are a subset of declarative languages, where the
 programmer states "what" instead of "how". Unlike in imperative languages,
@@ -191,7 +180,7 @@ and its return value depends solely on its arguments. This makes for determinist
 programs that are easier to test, debug and argue about their correctness.
 
 John Hughes describes the key benefits of functional paradigm in his paper
-\emph{Why Functional Programming Matters}\cite{whyfpmatters}. He first
+\textit{Why Functional Programming Matters}\cite{whyfpmatters}. He first
 explains how modularity of code is clearly very important, since
 separate modules are easier to write and test and then proceeds
 to show how functional programming increases modularity
@@ -240,7 +229,10 @@ That is, while testing is already a large issue due to the nature of video games
 Automated testing is not sufficient and companies have to hire teams
 of game testers to test games manually. And in terms of high performance,
 which is generally connected to lower-level languages, developers must
-wrestle with the lower-level nature, producing problems as well.
+wrestle with the lower-level nature, producing problems as well. Not to mention
+that Haskell is well regarded in the area of parallelism and concurrency,
+which is becoming more relevant as new hardware keeps increasing in core counts,
+and could make it comparable to \cpp{} as Haskell can already compile to very fast programs.
 
 We can see that video games, like any other software, could benefit from
 purely functional design, provided that we are able to model the
@@ -251,26 +243,140 @@ pioneering is worth to us.
 
 \subsection{Existing work}
 Indeed, people have tried developing games in Haskell and a decent
-progress has been made over the years. There are libraries like ...\\
-Also games that were published commercially and non-commercially ...\\
-... blog posts like the one by John Vargas (Dino Rush), ?reddit activity?,
-talks given in the past, Yampa by Keera Studios, elerea,
-Chucklefish's new game engine ?Cove?, Indigo in Scala
+progress has been made over the years. There are libraries/engines like Yampa\cite{yamparepo}
+and Helm\cite{helmrepo} for functionally reactive programming (FRP) of video games and
+other general FRP libraries that have been used to make games like Elerea\cite{elerearepo}
+or Netwire\cite{netwirerepo}. From non-FRP libraries there is
+FunGEn\cite{fungenrepo}, the self-proclaimed oldest Haskell game engine,
+Apecs, which we use to program a game and describe the process in chapter
+\ref{chptr:hasteroids}, and many others. It is important to note that
+most of these libraries or engines provide only limited capabilities
+compared to "real" industry engines like Unity or Unreal Engine
+and depending on the type and scale of the game, there is still a lot
+of work left for the developer.
 
-\section{Asteroids by Atari as an example}
-simple example with enough interesting world
-but not too complex for the scope of a ba thesis
+Regarding existing games themselves, there are two --- Magic Cookies and
+Enpuzzled --- that have been commercially pulished by Keera Studios,
+who also stand behind the Yampa game engine\cite{keerastudios}.
+Then there is Chucklefish, indie game developer studio, publisher and
+creator of popular Starbound, which announced to be working on their next
+game Wayward Tide in Haskell back in 2014\cite{waywardtide}. However, there
+has not been an announcement of the release date as of 2021 and the studio is
+focusing on other projects at the moment.
+
+So it remains to be a pioneering process and the games made are no where close
+to the rest of the industry but there \emph{is} more games than just the stated few.
+They are created by passionate individuals and shared with the community. Dozes of them can be found
+on the Haskell game development Reddit page (\url{www.reddit.com/r/haskellgamedev/})
+for instance. Many have also written blog posts or tutorials alongside with
+their games like Joe Vargas and his \textit{A Game in Haskell - Dino Rush}\cite{dinorush},
+which goes in-depth and explains his well though out architecture,
+or Ashley Smith and her \textit{Of Boxes and Threads: Games development in Haskell}\cite{aashaskell}
+and \textit{An Introduction to Developing games in Haskell with Apecs}\cite{aasapecs},
+that provide great overview and inspiration.
+
 
 \section{Rendering and interfacing with the OS}
-SDL2 and other existing Haskell libraries, why I chose SDL2
+\label{sect:aboutsdl}
+Essential part of a game engine is communicating with the operating system
+and rendering of models or textures. To do this we can
+either use a complete engine like the before mentioned Helm or
+a library like Gloss\cite{?}, which aims to provide an easy to use
+interface for managing input and rendering. Other libraries
+provide only Haskell bindings to existing media frameworks like GLUT, GLFW and SDL
+(Gloss actually uses GLUT or GLFW for its backend). The main goal of these libraries is
+to abstract from a specific window system and graphics hardware, providing
+cross-platform APIs for rendering, managing windows and receiving input and events.
+
+In both experiments described in this thesis we use the SDL bindings,
+to load textures and fonts, to poll input events, create windows and render scenes.
+Specifically, we use the \packagename{sdl2}, \packagename{sdl2-image}
+and \packagename{sdl2-ttf} packages. We choose SDL because there already
+are examples of its use in games we can learn from,
+the underlying C library works across multiple platforms,
+is well documented and is widely used. Moreover, the Haskell libraries
+include both high-level and low-level bindings, meaning we can
+enjoy a comfortable interface, yet at the same time the
+lower-level bindings serve as an example of
+Haskell's powerful Foregin Function Interface (FFI), which
+makes Haskell even more useful in the real world.
+
+To showcase this we can look at the two most used functions in
+our two games: \inlinehs{SDL.copy} and \inlinehs{SDL.copyEx}.
+We use them to copy our loaded textures to the rendering target like stamping
+a picture on a canvas. Both of these functions are examples of the high-level
+bindings which wrap around the low-level ones: \inlinehs{SDL.Raw.renderCopy}
+and \inlinehs{SDL.Raw.renderCopyEx},
+abstracting from the pointers, replacing them with Haskell's \inlinehs{Maybe},
+and throwing an error if the return value is negative. Those low-level functions
+are bound to the C functions\footnote{
+    The documentation of the C library: \url{https://wiki.libsdl.org/}
+} 
+using the mentioned FFI.\footnote{
+    \inlinehs{SDL.Raw.renderCopy} is not the direct binding itself,
+    it is a wrapper replacing \inlinehs{IO} in the actual binding \inlinehs{renderCopyFFI}
+    with a \inlinehs{MonadIO} constraint, otherwise identical.
+}
+Listing \ref{lst:ffi} shows the binding of \inlinehs{SDL.Raw.renderCopy}.
+
+\begin{listing}[H]
+\caption{Example of FFI binding}
+\label{lst:ffi}
+\begin{haskell}
+foreign import ccall "SDL.h SDL_RenderCopy" renderCopyFFI
+    :: Renderer -> Texture -> Ptr Rect -> Ptr Rect -> IO CInt
+\end{haskell}
+\end{listing}
+
+Other \inlinehs{SDL} functions used are for instance \inlinehs{SDL.clear},
+which clears the rendering target and \inlinehs{SDL.present}, which displays the
+current state of the target in the window. We also use \inlinehs{SDL.createWindow}
+and \inlinehs{SDL.createRenderer} to create a rendering context for a new window
+at the start of the program, after which we can load fonts and images as textures
+using \inlinehs{SDL.Font.load} and \inlinehs{SDL.Image.loadTexture}.
+No less important is \inlinehs{SDL.pollEvents} and \inlinehs{SDL.ticks},
+called every frame of the game to get input events, and time in milliseconds.
+
+
+\section{Asteroids by Atari as an example}
+\label{sect:whyasteroids}
+We conduct an experiment by recreating Asteroids, an arcade game
+created by Atari in 1979, once using SDL2 and Apecs and second time
+using SDL2 and a more pure-style architecture without Apecs,
+to evaluate the strengths and weaknesses of Haskell and Apecs.
+To evaluate Haskell as a language for game development in general
+would be a task far beyond the scope a bachelor's thesis. For that reason
+we narrow down our focus to smaller two-dimensional games and at the end
+only speculate how our findings may scale to larger games.
+We chose Asteroids as an example because its world comprises only of
+few object types, yet their relationships make the game quite interesting.
+It also does not rely on complex graphics, therefore we can focus
+on the code implementing the game rules and behaviors. Finally,
+because it is a famous, classical and simple game, others have made their recreations
+in the past and we use this to compare our two functional implementations
+to an imperative version picked from GitHub.
+
+The game can be described as followed:
+"A perfect synergy between simplicity and intense gameplay, the game has players using buttons to thrust a spaceship around an asteroid field. When one rock is shot, it breaks into smaller ones, often flying off in different directions at different speeds\ldots{} Every so often flying saucers enter the screen, intent on the player’s destruction."\cite{aboutasteroids}
+Its world comprises of rocks (asteroids), projectiles,
+flying saucers (large or small, trying to shoot the player) and the ship, controlled by the player,
+trying to survive and gain score points by shooting down rocks and flying saucers.
+There is a few features that we are omitting like sound effects, some animations
+and several minor game-play details. But we still need to handle input, simulate simple physics,
+detect collisions, spawn entities, keep score, transition between the game
+and its menus and then render everything, which proves to be enough to gain
+some experience and valuable insight into game development in Haskell.
+
 
 
 % ====================================
 % CHAPTER 2 - About Apecs
 % ====================================
 \chapter{Using the Apecs library \textemdash{} hAsteroids}
+\label{chptr:hasteroids}
 
 \section{About Apecs}
+\label{sect:apecs}
 Many libraries for game programming in Haskell have come out over the years.
 One of the more recent ones is Apecs — "a fast, type-driven
 Entity\textendash{}Component\textendash{}System library for game programming."\cite{apecsrepo}
@@ -298,18 +404,18 @@ The making of Ecstasy was actually inspired by author's issues with Apecs. \\
 \url{https://reasonablypolymorphic.com/blog/why-take-ecstasy/}
 }.
 
-\begin{listing}
-\label{lst:component}
-\caption{Defining instance for \lstinline{Component}}
+\begin{listing}[H]
+\caption{Defining instance of \inlinehs{Component}}
 \begin{haskell}
 newtype Position = Position (V2 Double)
 instance Component Position where
     type Storage Position = Map Position
 \end{haskell}
+\label{lst:component}
 \end{listing}
 
 To define a component in Apecs means to define an instance of the class \inlinehs{Component},
-as we see in the \ref{lst:component}.
+as we see in the listing \ref{lst:component}.
 The \inlinehs{Component} class
 requires us to state how we want to store the given component
 by assigning a type alias to the specific storage type.
@@ -328,10 +434,9 @@ class needed for altering contents of \inlinehs{World} through
 the other functions in Apecs. The resulting \inlinehs{World}
 may look close to something as shown in listing \ref{lst:world}.
 
-\begin{listing}
-\label{lst:world}
+\begin{listing}[H]
 \caption{Simplified world state type example}
-\begin{minted}{haskell}
+\begin{haskell}
 data World =
     World
     { record1 :: !(Unique Player)
@@ -340,7 +445,8 @@ data World =
     , record4 :: !(Map Position)
     , record5 :: !(Global Time)
     }
-\end{minted}
+\end{haskell}
+\label{lst:world}
 \end{listing}
 
 Having components, we need a way to run systems. In Apecs,
@@ -349,28 +455,40 @@ Therefore any "system" in the ECS sense must be a function returning \inlinehs{S
 One such "micro-system" is the \inlinehs{newEntity} function.
 It accepts a tuple of components and adds them into
 their records — the new entity itself is defined by the components stored under its ID.
-\begin{minted}{haskell}
-newEntity (Ship $ pi / 2 * 3, Position $ V2 x y, Velocity $ V2 0 0)
-\end{minted}
-Another noteworthy functions to build systems are the component map functions
+\begin{haskell}
+newEntity ( Ship $ pi / 2 * 3
+          , Position $ V2 0 0
+          , Velocity $ V2 0 0
+          )
+\end{haskell}
+More noteworthy functions to build systems are the component map functions
 shown in the listing \ref{lst:cmaps}. They are the means of altering the world state.
 
-\begin{listing}
-\label{lst:cmaps}
-\caption{Component maps documentation}
-\begin{minted}{haskell}
--- | Maps a function over all entities with a cx, and writes their cy.
-cmap :: forall w m cx cy. (Get w m cx, Members w m cx, Set w m cy) => (cx -> cy) -> SystemT w m ()
+\begin{listing}[H]
+\caption{Component maps documentation\cite{apecsdocs}}
+\begin{haskell}
+-- 'w' is the world type, 'm' is a monad,
+-- 'cx','cy' and 'c' are tuples of components
 
--- | Monadically iterates over all entities with a cx, and writes their cy.
-cmapM :: forall w m cx cy. (Get w m cx, Set w m cy, Members w m cx) => (cx -> SystemT w m cy) -> SystemT w m ()
+-- | Maps a function over all entities
+--   with a cx, and writes their cy.
+cmap :: forall w m cx cy.
+    (Get w m cx, Members w m cx, Set w m cy) =>
+    (cx -> cy) -> SystemT w m ()
+
+-- | Monadically iterates over all entities
+--   with a cx, and writes their cy.
+cmapM :: forall w m cx cy.
+    (Get w m cx, Set w m cy, Members w m cx) =>
+    (cx -> SystemT w m cy) -> SystemT w m ()
 
 -- | Monadically iterates over all entities with a cx
-cmapM_ :: forall w m c. (Get w m c, Members w m c) => (c -> SystemT w m ()) -> SystemT w m ()
-\end{minted}
+cmapM_ :: forall w m c.
+    (Get w m c, Members w m c) =>
+    (c -> SystemT w m ()) -> SystemT w m ()
+\end{haskell}
+\label{lst:cmaps}
 \end{listing}
-
-[[https://hackage.haskell.org/package/apecs-0.9.2/docs/Apecs.html](https://hackage.haskell.org/package/apecs-0.9.2/docs/Apecs.html)] - probably simplify the types with an asterisk
 
 \inlinehs{cmap} accepts a function that takes a tuple of components
 and returns some other tuple of components. It internally iterates
@@ -450,25 +568,25 @@ over time when the loop is in the \inlinehs{Playing} state.
 This is divided into multiple function calls:
 \begin{itemize}[-]
     
-    \item  \inlinehs{cmap \$ stepKinetics dT}
+    \item  \inlinehs{cmap $ stepKinetics dT}
 
     iterates over all entities and adds their velocity vector multiplied
     by time \inlinehs{dT} to their position vector and also takes care
     of wrapping the space — if an entity flies out of the screen on one side,
-    it comes back in from the other side;
+    it comes back in from the other side.
 
-    \item \inlinehs{cmap \$ decelerateShip dT}
+    \item \inlinehs{cmap $ decelerateShip dT}
 
-    simply applies deceleration to the ship by scaling down its velocity vector slightly;
+    simply applies deceleration to the ship by scaling down its velocity vector slightly.
 
-    \item \inlinehs{cmapM \$ stepShipState dT}
+    \item \inlinehs{cmapM $ stepShipState dT}
 
     is responsible for transitioning between ship states
     (\inlinehs{Alive}, \inlinehs{Exploding Int}, \inlinehs{Respawning Int}
     where the integers serve as countdown timers for the state transition)
-    and the "explosion animation";
+    and the "explosion animation".
 
-    \item \inlinehs{cmapM_ \$ ufosShoot dT}
+    \item \inlinehs{cmapM_ $ ufosShoot dT}
 
     iterates over all \inlinehs{Ufo} components decrementing the time to
     shoot and when it reaches 0, it creates a new \inlinehs{Bullet}.
@@ -480,15 +598,15 @@ This is divided into multiple function calls:
 
     \item \inlinehs{awardLifeIf10000}
 
-    For reaching every 10000 score points ship lives are incremented by 1.
+    increments ship's lives by 1 for reaching every 10000 score points.
 
-    \item a lambda incrementing \inlinehs{WaveTime}
+    \item A lambda incrementing \inlinehs{WaveTime}
 
-    Simply adds the frame delta time \inlinehs{dT} to the wave time counter.
+    simply adds the frame delta time \inlinehs{dT} to the wave time counter.
 
     \item \inlinehs{spawnUfos}
 
-    Randomly creates new UFO entities on the left side of the screen,
+    randomly creates new UFO entities on the left side of the screen,
     with the chances increasing as the time spent in one wave (\inlinehs{WaveTime}) passes.
 
     \item \inlinehs{spawnNewAsteroidWaveIfCleared}
@@ -499,17 +617,17 @@ This is divided into multiple function calls:
     from the \inlinehs{Initialize} module, which uses the random stateful
     generators from the \inlinehs{WithResources} reader monad to create new asteroids.
 
-    \item a lambda decrementing all \inlinehs{TimeToLive} components
+    \item A lambda decrementing all \inlinehs{TimeToLive} components
 
-    Simply subtracts the frame delta time \inlinehs{dT} from all the time to live components.
+    simply subtracts the frame delta time \inlinehs{dT} from all the time to live components.
 
     \item \inlinehs{destroyDeadBullets} and \inlinehs{destroyDeadUfos}
 
-    use \inlinehs{cmapM_} to destroy all the components for entities that run out of "time to live."
+    use \inlinehs{cmapM_} to destroy all the components for entities that run out of "time to live".
 
     \item \inlinehs{detectAndHandleCollisions}
 
-    Collision handling has its own module — \inlinehs{Collisions}.
+    is defined in its own module \inlinehs{Collisions}.
     There the collisions are detected and handled individually between each
     entity group. The general idea is that we use \inlinehs{cmapM_} inside of \inlinehs{cmapM_}
     as an equivalent of nested for loops. This way, for every asteroid,
@@ -540,11 +658,7 @@ only the world is drawn. This is taken care of by \inlinehs{drawWorld},
 which calls functions to draw the background, entities and the UI
 (number of lives and the score). Entities are drawn using \inlinehs{cmapM_}
 with a lambda and a wrapper function around the \inlinehs{SDL.copy} and
-\inlinehs{SDL.copyEx}, which copy the texture to the rendering target.
-
-maybe a footnote - \url{https://wiki.libsdl.org/SDL_RenderCopy](https://wiki.libsdl.org/SDL_RenderCopy)}
-is what SDL.Copy is binding to
-
+\inlinehs{SDL.copyEx}, which renders the corresponding texture for every entity.
 
 
 \section{Reflection}
