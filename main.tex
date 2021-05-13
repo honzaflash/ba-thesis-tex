@@ -105,6 +105,9 @@
 
 \newminted[term]{console}{breaklines}
 
+\newcommand{\vs}{vs.\ }
+
+
 
 
 \begin{document}
@@ -827,7 +830,7 @@ In the previous chapter we see how a program in Haskell can still be
 written in a very imperative style. This is manifested in the ever present
 monads keeping state and access to I/O and the numerous \inlinehs{do} blocks.
 This is certainly a valid approach and has its benefits as we discuss
-further in chapter \ref{chptr:comparison} but for the second version of
+further in chapter \ref{chptr:evaluation} but for the second version of
 Asteroids (project \emph{pure-asteroids}) we focus on functional purity,
 clarity and proper compartmentalization.
 The design is inspired by a keynote\cite{carmackkeynote} of John Carmack, the co-founder
@@ -1182,16 +1185,81 @@ effects can be everywhere -> high flexibility low safeness
 % CHAPTER 5 - Final COMPARISON
 % ====================================
 
-\chapter{Comparing the approaches}
-\label{chptr:comparison}
+\chapter{Evaluation of the approaches}
+\label{chptr:evaluation}
 
-in this chapter we first compare, paying attention to what the promised benefits of FP were,
-than summarize the pros and cons of Haskell
+in this chapter we first compare the three implementations, paying attention to modularity,
+expressiveness, safeness, development costs and performance.
+Then we discuss the conflicts observed in the comparisons
+and reflect on weather the promised benefits of Haskell from section \ref{sect:whyfpmatters}
+were reached.
+
+note: replace "safeness" with "security"?
+
+\section{Comparison}
 
 address how this is not meant to be an evaluation of imperative languages,
 even though we are comparing against them and critiquing them
 --- especially against \cpp{} which does not fully represent all the imperative languages
 
+\subsection{pure-asteroids \vs imperative Asteroids}
+
+\subsection{pure-asteroids \vs hAsteroids}
+
+\subsection{hAsteroids \vs imperative Asteroids}
+They are surprisingly similar.
+
+The difference (or lack there of??) between monad state and an implicit object state.
+Separation of effectful and uneffectful code - monad and const keyword.
+
+Haskell can be a very imperative language
+
+\subsection{Code statistics}
+
+
+\section{Emerging dilemmas}
+
+\subsection{Flexibility \vs safeness}
+
+\subsection{Abstraction \vs expressiveness}
+
+\subsection{...?}
+
+
+% RECAP and final EVALUATION
+\section{Recapitulation / Final lesson}
+
+it is said that Garbage Collection (GC) can be a problem in Haskell
+with interactive real-time applications like video games, but it has been proven that
+it is ok for small to medium sized games
+--- paradox: pure functional design is great for long term and large scale,
+with Haskell the upfront cost is higher but the system produced is more likely to be of high quality
+
+classes can (and should) be used for polymorphism, increasing flexibility scalability and
+reducing code duplicity
+
+it remains to be true even for game development that the code can be more expressive,
+safer and briefer --- there is a balance between abstraction and explicitness
+
+the language it self being very high-level and abstract can make it much more
+difficult to optimize, which is important for games --- languages like \cpp{} have the advantage
+
+We have rediscovered that Haskell can be very imperative, as explained by Simon P.~Jones and
+Philip Wadler in their paper \textit{Imperative Functional Programming}.\cite{imperativefp}
+% https://www.microsoft.com/en-us/research/wp-content/uploads/1993/01/imperative.pdf
+% https://youtu.be/re96UgMk6GQ?t=2089
+In that paper, they described for the first time, how monads could be used for input/output operations
+in lazy languages, and confirmed what we see in hAsteroids ---  with the \inlinehs{IO} monad
+Haskell can very closely resemble C. Yet, it keeps the benefits of functional style intact by
+clearly separating the imperative from the functional.
+
+
+
+
+% TEMP notes
+\chapter*{Temporary notes on comparing}
+
+These are other ways of structuring the comparison. Please, excuse the mess.
 
 \section{Common game engine features}
 here we compare the already described games by how they
@@ -1247,16 +1315,19 @@ but also increments asteroid rotation and decrements bullet health (that is used
 and it even flags bullets as dead if health reaches 0
 
 \section{Attributes}
-evaluate implementations by these attributes
-\subsection{Modularity}
+We evaluate our described implementations based on several desirable attributes for video games,
+some of which were promised in section \ref{sect:whyfpmatters} as benefits of Haskell.
 
-\subsection{Safeness}
-
+aspects of Modularity:
 \subsection{Flexibility and scalability}
 
-\subsection{Briefness}
+
+\subsection{Briefness and development speed}
+
+Haskell has interpreter but can also be compiled -> fast development \emph{and} fast programs
+
 Haskell code is often said to be much shorter than its imperative equivalent.\\
-"here are some statistics, take it for what it is worth..."\\
+\~here are some statistics, take it for what it is worth...\~\\
 number of lines, words, characters\\
 \mintinline{console}{wc --help}: "A word is a non-zero-length sequence of characters delimited by white space"\\
 
@@ -1333,24 +1404,23 @@ Asteroids by Jason Halverson
 \# TODO: process into charts perhaps and comment on it
 
 
-\section{Recapitulation / Final lesson?}
+\subsection{Safeness and testability}
+\cpp{} code needs testing more and it is more difficult to do - example...
+\mintinline{cpp}{const} keyword is a very good mechanism that is not used to its
+full potential in the imperative example.
 
-it is said that Garbage Collection (GC) can be a problem in Haskell
-with interactive real-time applications like video games, but it has been proven that
-it is ok for small to medium sized games
---- paradox: pure functional design is great for long term and large scale,
-with Haskell the upfront cost is higher but the system produced is more likely to be of high quality
+Haskell has more than \mintinline{cpp}{const}, we have already pointed out how
+the type of a function in pure-asteroids clearly limits its effects.
+However, hAsteroids hints that poor design choices can negate this effect.
 
-classes can (and should) be used for polymorphism, increasing flexibility scalability and
-reducing code duplicity
+\subsection{Program performance}
+with low-level languages it is easier to optimize, they don't hide
+what the computer is actually doing. Haskell is \emph{very} abstract,
+its formality allows the compiler to do a lot of optimizations, but
+it requires deeper knowledge of \inlinehs{ghc} for the programmer
+to know how the code will perform. Laziness is an example
+of a language feature that can cause problems with performance...
 
-it remains to be true even for game development that the code can be more expressive,
-safer and briefer --- there is a balance between abstraction and explicitness
-
-Haskell has interpreter but can also be compiled -> fast development \emph{and} fast programs
-
-the language it self being very high-level and abstract can make it much more
-difficult to optimize, which is important for games --- languages like \cpp{} have the advantage
 
 
 
