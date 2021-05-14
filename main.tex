@@ -1199,6 +1199,7 @@ were reached.
 note: replace "safeness" with "security"?
 
 \section{Comparison}
+% TODO: show a part of code where hAsteroids looks close to the c++
 
 address how this is not meant to be an evaluation of imperative languages,
 even though we are comparing against them and critiquing them
@@ -1229,9 +1230,79 @@ new event paths, and collision detection is handled similarly to hAsteroids.
 
 \subsection{Expressiveness and safeness}
 
-code examples
+As we have already discussed in chapter \ref{chap:motivationandmethods},
+functional languages are designed to be clearer (\emph{expressiveness})
+and to have better control of side effects (\emph{safeness}) then conventional
+imperative languages. Now the imperative code can be even more or less unsafe
+depending on its type system. \cpp{} is mostly strongly and statically typed, which
+does provide a certain amount of assurance, some other languages are not.
+This can protect us from trying to add an object to a number for instance.
+
+Many languages also take various steps towards controlling side effects.
+One such example could be the \inlinecpp{const} keyword used to define a variable
+that cannot be mutated. In \cpp{} this keyword can also be used on methods
+to prevent them from changing the state of the object, allowing us to call these
+methods even on \inlinecpp{const} objects. Usage of this keyword, would prevent
+the author of imperative asteroids from writing this drawing function that
+unexpectedly also changes the state of bullets:
+\begin{cppblock}
+void Game::draw(const Interface &ui) {
+
+    /* ... other objects are drawn... */
+    
+    for (int i = 0; i < bullets.size(); i++) {
+        if (bullets[i]->isAlive()) {
+            bullets[i]->draw();
+            bullets[i]->setHealth(); // a setter?!
+        }
+    }
+}
+\end{cppblock}
+However, languages like Java or Python do not support immutable objects
+and we can see how control of side effects in general is a \say{plan B} in the imperative paradigm.
+
+Conversely, since Haskell originated as an academic language,
+functional purity was allowed to be plan A and having
+side effects was actually the plan B in this case. We saw how this works out well for expressiveness
+in the example of \textbf{pure-asteroids} as showcased at the beginning of section \ref{sect:purereflection}.
+And because all variables are immutable, change is made explicit as a \emph{new} returned value
+that we pass forward.
+Moreover, any input/output side effects are clearly separated by the \inlinehs{IO} monad
+and the rest of the code is completely deterministic, which all together with strong static typing
+makes for a very safe language.
+
+That is, if used well --- \textbf{hAsteroids} turned out to be a very interesting game.
+Apecs makes game programming in Haskell approachable and provides
+very good performance by being \emph{strict and imperative}. This inner imperativness
+makes purity sort of a plan B again, and the programmer has to be clever about using monad polymorphism
+if they want to keep \say{the danger of \inlinehs{IO}} contained. This has occurred to us in the middle
+of the hAsteroids development process and so we decided to embrace it and see where it leads.
+If we redesigned the types we could have reached better safeness and even expressiveness, however,
+with the game world sate abstracted it is still not always clear what functions do
+when applied through \inlinehs{cmapM} or \inlinehs{cmapM_}.
+
+
 
 \subsection{Development costs}
+
+- development speed and comfort
+
+- ease of testing and debugging\\
+how do you test this:
+\begin{cppblock}
+// Move each of the bullets forward if it is alive
+void Game::advanceBullets() {
+    for (int i = 0; i < bullets.size(); i++) {
+        if (bullets[i]->isAlive()) {
+            bullets[i]->advance();
+            if (!isOnScreen(bullets[i]->getPoint())) {
+                bullets[i]->kill();
+            }
+        }
+    }
+}
+\end{cppblock}
+how OOP objects model state of their methods
 
 \subsection{Performance}
 
@@ -1296,6 +1367,10 @@ in lazy languages, and confirmed what we see in hAsteroids ---  with the \inline
 Haskell can very closely resemble C. Yet, it keeps the benefits of functional style intact by
 clearly separating the imperative from the functional.
 
+perhaps also quote Carmack again, when he said how over the years of supervising
+hundreds of programmers working of thousands and thousands of lines of code, he saw that
+anything that is legal for the compiler will end up in your code base eventually
+--- Haskell's "brutal" functional purity is a win
 
 
 
