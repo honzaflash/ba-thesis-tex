@@ -263,10 +263,11 @@ pioneering is worth to us.
 
 
 \subsection{Existing work}
+\label{sect:existing}
 Indeed, people have tried developing games in Haskell and a decent
 progress has been made over the years. There are libraries/engines like Yampa\cite{yamparepo}
 and Helm\cite{helmrepo} for functionally reactive programming (FRP) of video games and
-other general FRP libraries that have been used to make games like Elerea\cite{elerearepo}
+other general FRP libraries, that have been used to make games, like Elerea\cite{elerearepo}
 or Netwire\cite{netwirerepo}. From non-FRP libraries there is
 FunGEn\cite{fungenrepo}, the self-proclaimed oldest Haskell game engine,
 Apecs\cite{apecsrepo}, which we use to program a game and describe the process
@@ -476,7 +477,7 @@ To write a game using apecs we must define \textbf{components} and \textbf{syste
 Systems also take care of creating new \textbf{entities},
 as creating them means to store some components under a new ID.
 
-First, defining a \textbf{component} means to define an instance of the class
+First, defining a \textbf{component} means to define an instance of the type-class
 \inlinehs{Component}, as we see in the listing \ref{lst:component}.
 The \inlinehs{Component} class
 requires us to state how we want to store the given component
@@ -492,7 +493,7 @@ and it belongs to the special \inlinehs{global} entity together
 with every other entity at the same time. Finally, we call \inlinehs{makeWorld},
 which uses Template Haskell to generate \inlinehs{World} product type
 along with \inlinehs{initWorld} function and instances of the \inlinehs{Has}
-class needed for altering contents of \inlinehs{World} through
+type-class needed for altering contents of \inlinehs{World} through
 the other functions in Apecs. The resulting \inlinehs{World}
 may look close to something as shown in listing \ref{lst:world}.
 
@@ -789,7 +790,7 @@ and everything is type-safe.
 
 However, this approach is far from perfect. Handling collisions on an
 individual basis would scale very poorly, so some universal interface would be better.
-This could be achieved by defining a class and its instances for the marker components.
+This could be achieved by defining a type-class and its instances for the marker components.
 More polymorphism could also differentiate functions that require the
 \inlinehs{System} monad, the \inlinehs{WithResources} monad or both.
 In the current state, there are many functions, such as \inlinehs{reactToInput},
@@ -1130,7 +1131,7 @@ in pure-asteroids is very simple but it could be improved by using more
 complicated algorithms.
 
 However, even though we could use parallelism, the scalability of our design is somewhat lacking.
-It would be appropriate to use more classes in general. A class interface for
+It would be appropriate to use more type-classes in general. A class interface for
 collision detection, stepping, communication using events and for resources abstraction.
 Pure-asteroids is too explicit, which makes it relatively rigid
 --- adding a random number
@@ -1190,20 +1191,25 @@ effects can be everywhere -> high flexibility low safeness
 \chapter{Evaluation of the approaches}
 \label{chptr:evaluation}
 
-in this chapter we first compare the three implementations, paying attention to modularity,
-expressiveness, safeness, development costs and performance.
-Then we discuss the conflicts observed in the comparisons
-and reflect on weather the promised benefits of Haskell from section \ref{sect:whyfpmatters}
-were reached.
+In this chapter we first compare Haskell to imperative languages in general or specifically to \cpp{},
+referencing back to the promised benefits of Haskell from section \ref{sect:whyfpmatters}.
+Then we discuss the conflicts observed in the comparisons and finally summarize our findings.
 
-note: replace "safeness" with "security"?
+% note: replace "safeness" with "security"?
 
 \section{Comparison}
 % TODO: show a part of code where hAsteroids looks close to the c++
 
-address how this is not meant to be an evaluation of imperative languages,
-even though we are comparing against them and critiquing them
---- especially against \cpp{} which does not fully represent all the imperative languages
+In this section we compare the three example implementations or more broadly Haskell and
+imperative languages represented by \cpp{}. Keep in mind that \cpp{} is by no means meant
+to represent imperative languages fully, even less so is the chosen imperative implementation
+of Asteroids (further referred to as imperative Asteroids) meant to represent
+the ideal of a game in \cpp{}. We try to address this in especially relevant places,
+in others, it is left out for the sake of conciseness and readability.
+The comparison is organized by qualities important in game development:
+flexibility and scalability, expressiveness and safeness, development costs, performance.
+The section is then closed off with few statistical observations.
+
 
 \subsection{Flexibility and scalability}
 
@@ -1263,13 +1269,14 @@ and we can see how control of side effects in general is a \say{plan B} in the i
 
 Conversely, since Haskell originated as an academic language,
 functional purity was allowed to be plan A and having
-side effects was actually the plan B in this case. We saw how this works out well for expressiveness
+side effects was actually the plan B in this case. We saw how this works out well for expressiveness and clarity
 in the example of \textbf{pure-asteroids} as showcased at the beginning of section \ref{sect:purereflection}.
 And because all variables are immutable, change is made explicit as a \emph{new} returned value
 that we pass forward.
 Moreover, any input/output side effects are clearly separated by the \inlinehs{IO} monad
 and the rest of the code is completely deterministic, which all together with strong static typing
-makes for a very safe language.
+makes for a very safe language --- not only there is less potential sources of bugs, but the
+correctness of a program is easier to perceive and argue about.
 
 That is, if used well --- \textbf{hAsteroids} turned out to be a very interesting game.
 Apecs makes game programming in Haskell approachable and provides
@@ -1285,12 +1292,85 @@ when applied through \inlinehs{cmapM} or \inlinehs{cmapM_}.
 
 \subsection{Development costs}
 
-- development speed and comfort
+The purpose of any language feature can ultimately be seen as reducing the cost of development.\footnote{
+% By development costs, we mean mainly development speed and comfort.
+By development costs, we mean mainly time and endured frustration. Generally speaking,
+any piece of software can be written in any language, what differs is the cost.
+}
+The already discussed Haskell features all bring the costs down but there is more,
+that we want to look at through the lens of development speed and comfort.
+Both \textbf{pure-asteroids} and \textbf{hAsteroids} more or less benefit from these.
 
-- ease of testing and debugging\\
-how do you test this:
-\begin{cppblock}
-// Move each of the bullets forward if it is alive
+One of such features is \textbf{GHCi}, \say{GHC's interactive environment,
+in which Haskell expressions can be interactively evaluated and programs can be interpreted.}\cite{ghciwiki}
+% https://wiki.haskell.org/GHC/GHCi
+Haskell is quite unique by being a compiled language that comes with an interpreter as well.
+An interpreter allows us to test short expressions quickly, either to try something new or to
+run bits of already existing code. \texttt{GHCi} can also print the types of expressions
+or information about type-classes. This reduces the need to reference actual documentation,
+although the documentation is also very helpful. \say{Hoogle is a Haskell API search engine,
+which allows you to search the Haskell libraries on Stackage by either function name,
+or by approximate type signature.}\cite{hoogle} This makes searching for functions easier
+and can prevent \say{wheel reinvention}.
+
+Furthermore, there is many predefined high-order functions like
+\inlinehs{map}, \inlinehs{filter}, \inlinehs{foldl} and so forth. This way a part of the
+job is already done and we only need to provide the elemental function to fold with for instance.
+This together with being able to partially apply functions allows us to write
+very \textbf{brief and elegant code}. In listing \ref{lst:elegance} we can see asteroid stepper implementations
+from imperative asteroids and pure-asteroids.\footnote{
+The \cpp{} version also spawns new wave of asteroids if the current has been cleared.
+That part of code was omitted as it is irrelevant for the example.
+} The Haskell version uses \inlinehs{map} with a partially applied function,
+while too being only partially applied. Granted, other languages have structures
+to make this sort of task at least slightly more elegant too
+and even \cpp{} itself has \inlinecpp{std::for_each},
+which could be used to make this piece of code more concise. However, this characteristic extends
+to the whole Haskell code base --- in both of our games there is only three instances
+of explicit recursion in total: the game loops and \inlinehs{drawLines} in pure-asteroids.
+This is rather impressive considering the games have to manipulate collections of events,
+textures, entities, components and more.
+More on conciseness in subsection~\ref{sect:codestats} (Code statistics).
+\begin{listing}[H]
+\begin{minted}[fontsize=\small, breaklines]{cpp}
+// C++
+void Game::advanceAsteroids() {
+    for (list<Asteroid*>::iterator it = asteroids.begin();
+         it != asteroids.end(); it++) {
+            (*it)->advance();
+    }
+}
+\end{minted}
+
+\begin{minted}[fontsize=\small, breaklines]{haskell}
+-- Haskell
+stepAsteroids :: Time -> Asteroids -> Asteroids
+stepAsteroids dT = HM.map (stepAsteroid dT)
+\end{minted}
+
+\caption{Asteroid stepping with for-loop and map.}
+\label{lst:elegance}
+\end{listing}
+
+Another benefit discussed at the beginning in section \ref{sect:whyfpmatters}
+is \textbf{ease of testing and debugging}. Testing a pure function is as simple or as complicated
+as the function's parameters and its output. Testing an impure function is
+theoretically nearly impossible to do \emph{exhaustively}, since without looking at
+its definition we do not know weather it reads from a file or not for instance.
+Practically, we do not need to be completely exhaustive and can make assumptions,
+however, those unchecked assumptions are the weak spots that may cause problems.
+
+Due to time constraints and the simple nature of Asteroids we did not use
+any automated tests during our development. Still, to substantiate
+the claim of easier testing we look at the two functions\footnotemark in listing \ref{lst:testingexamp}
+and consider how we would go about testing them. 
+\footnotetext{ The examples are again taken from imperative asteroids and pure-asteroids.
+\inlinehs{stepBullets} has been simplified in this case. The real version also
+inserts new bullets based on the input state, which happens elsewhere in the \cpp{} implementation.
+}
+\begin{listing}
+\begin{minted}[fontsize=\small, breaklines]{cpp}
+// C++
 void Game::advanceBullets() {
     for (int i = 0; i < bullets.size(); i++) {
         if (bullets[i]->isAlive()) {
@@ -1301,14 +1381,131 @@ void Game::advanceBullets() {
         }
     }
 }
-\end{cppblock}
-how OOP objects model state of their methods
+\end{minted}
+
+\begin{minted}[fontsize=\small, breaklines]{haskell}
+-- Haskell
+stepBullets :: Time -> World -> Bullets -> (WorldEvents, Bullets)
+stepBullets dT w =
+    traverse (stepBullet dT w) . filterDeadBullets
+\end{minted}
+
+\caption{Impure and pure stepping of bullets.}
+\label{lst:testingexamp}
+\end{listing}
+To test \inlinehs{stepBullets} we need to provide three arguments. First is a simple
+integer and the other two are much more complex but still could be generated randomly using
+Haskell QuickCheck or provided \say{manually}. The only effect produced is the returned
+pair that can be checked for correctness by other functions. On the contrary, to test
+\inlinecpp{advanceBullets} we need to set up a \inlinecpp{Game} object with its contents,
+many of which are \inlinecpp{private}. That requires refactoring and
+the same applies to testing the state after \inlinecpp{advanceBullets} has been called.
+Additionally, we may want to test not only weather the collection of bullets has
+changed correctly but also weather the rest of the state is correct.
+\textbf{hAsteroids} is no better as the test needs to run inside of the \inlinehs{SystemT w m a} monad,
+where we set up components using \inlinehs{newEntity} function and then after running
+tested system checking the validity of all the components.
+
+Lastly, an obvious disadvantage is the fact that writing a game in Haskell
+is still largely a pioneering process. There is a decent amount of existing general tools,
+one of them being the already described interpreter,
+which can also be used to setup breakpoints and step through evaluation.
+More extensive debuggers like Hat exist and package and project managers like Cabal
+and Stack also speed up development. However, In terms of game development specific tools
+there is not many besides the several libraries like apecs listed in section \ref{sect:existing}.
+This can be contrasted with the complete, general engines, that come included with 
+tools for the whole development pipeline such as Unity.
+
+This was expected and it turned out not to be a problem as our example game was
+very simple. Yet, we can imagine that with a larger game we would start
+to feel the need for more tools.
+
 
 \subsection{Performance}
 
-do benchmarks profiling if time
+Performance in games is very important since there is a real minimum requirement
+given by desired frame rate and player's expected hardware. A game can offer
+a decent experience at 60 FPS, which gives us roughly 16 ms to do any computation
+we need for a single frame. With smaller games this is plenty, but as the entity
+counts grow and rules get more complex, performance optimization becomes essential.
+For that reason we want to compare the performance of our implementations and
+the tools available to optimize it.
+
+We put together simple \textbf{benchmarking} versions of all three games and ran them
+to find the maximum rendered frames per second in similar situations.\footnote{
+The benchmarking versions can be found in their respective GitHub repositories
+on branch called \say{bench}:\\
+\url{https://github.com/honzaflash/cpp-asteroids/tree/bench}\\
+\url{https://github.com/honzaflash/ba-thesis/tree/bench/hAsteroids}\\
+\url{https://github.com/honzaflash/ba-thesis/tree/bench/pure-asteroids}
+}
+The games were altered to spawn different quantities of asteroids and
+run for ten seconds with the ship constantly spinning and shooting one bullet per frame.
+The results are rather illustrational as the differences between games were not controlled
+very well: impure asteroids uses GLUT with the FPS limited to maximum of 59, because of issues
+with Stack on Windows the Haskell games were run in the interpreter, hAsteroids renders
+textures instead of drawing vectors like the other two and other minor differences.
+The results can be seen in table \ref{tab:benchfps}.
+We ran the test for 100 asteroids also in a virtual machine with Ubuntu,
+where \inlinehs{stack build} works normally, and the results were very different:
+46, 21 and 34 FPS respectively for imperative asteroids, hAsteroids and pure-asteroids.
+
+\begin{table}
+  \begin{tabularx}{\textwidth}{|r|llX|}
+    \toprule
+    Asteroid count & \textbf{impure asteroids} & \textbf{hAsteroids} & \textbf{pure-asteroids} \\
+    \midrule
+    10000 & 41 & 2   & 1   \\
+    500   & 59 & 30  & 16    \\
+    250   & 59 & 46  & 23    \\
+    100   & 59 & 55  & 37 \\
+    50    & 59 & 74  & 92 \\
+    25    & 59 & 117 & 140 \\
+    10    & 59 & 141 & 154 \\
+    5 + 200 UFOs & -- & 8 & 83 \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Average FPS in the benchmarks.}
+  \label{tab:benchfps}
+\end{table}
+
+Unfortunately, due to time constraints we did not diagnose the cause of these behaviours,
+however, we can assume, what appears to be true in other fields and what is reflected
+in the compiled benchmarks, that Haskell is mostly comparable to \cpp{} in performance,
+and then as we expected, that apecs is faster than non-ECS data model for higher entity counts.
+
+Worthy of noting is also the bit of profiling we did on the runs in Ubuntu.
+Most importantly it showed that neither of the games had issues with Garbage Collection (GC)
+as this can become a problem with larger lazy systems.
+The productivity reported by the \mintinline{console}{-s} profiling flag was 99.1 \%
+for hAsteroids and 97.6 \% for pure-asteroids,
+meaning GC is not causing any meaningful delays in our games.
+
+This brings us to the \textbf{tools} available and ease of \textbf{optimization} in general.
+As mentioned in the previous subsection, there are various tools including
+profilers for Haskell but \cpp{} will have larger variety. Another advantage
+for \cpp{} in this discipline is its low-level access to hardware and memory management.
+Generally the less abstracted code is easier to optimize, since it is closer to
+what the CPU will actually execute. With more abstraction, more work must be
+done to find out what the CPU does in the end. This is especially the case for Haskell
+which has high level of abstraction and during compilation goes through \emph{three} intermediate
+languages, therefore if one desires to see how the code gets \say{unabstracted}, he must
+first learn at least the first of the intermediate languages --- Core.
+To make up for this at least partially, as we have also stated before,
+GHC can do a lot of optimizing on its own and purely functional code is easier
+to execute in parallel and concurrently, which Haskell is very good at.
 
 
+
+\subsection{Code statistics}
+\label{sect:codestats}
+
+Some statistics about code length and keyword usage perhaps here for fun\\
+
+imp asteroids does implement some extra stuff and has buttloads of comments,
+but also does not have ufos
+
+% ----------------------------------------------------------
 % \subsection{pure-asteroids \vs imperative Asteroids}
 
 % \subsection{pure-asteroids \vs hAsteroids}
@@ -1325,10 +1522,7 @@ do benchmarks profiling if time
 % Separation of effectful and uneffectful code - monad and const keyword.
 
 % Haskell can be a very imperative language
-
-\subsection{Code statistics}
-Some statistics about code length and keyword usage perhaps here for fun
-
+% ------------------------------------------------------------
 
 % Further discussion about programming theory
 \section{Observed dilemmas}
@@ -1336,6 +1530,9 @@ Some statistics about code length and keyword usage perhaps here for fun
 \subsection{Flexibility \vs safeness}
 
 \subsection{Abstraction \vs expressiveness}
+
+to abstract or not to abstract\\
+object state is a similar abstraction to monad state\\
 
 \subsection{...?}
 
@@ -1539,7 +1736,50 @@ it requires deeper knowledge of \inlinehs{ghc} for the programmer
 to know how the code will perform. Laziness is an example
 of a language feature that can cause problems with performance...
 
+Listing that I ended up not using... probably not!
+\begin{listing}[hbt]
+\begin{minted}[fontsize=\small, breaklines]{cpp}
+// C++
+void drawShip(const Point &center, int rotation) {
+    const PT pointsShip[] = {
+    // top     r.wing   r.engine l.engine  l.wing    top
+       {0, 6}, {6, -6}, {2, -3}, {-2, -3}, {-6, -6}, {0, 6}  
+    };
+    glBegin(GL_LINE_STRIP);
+    for (int i = 0; i < sizeof(pointsShip)/sizeof(PT); i++)
+    {
+        Point pt(center.getX() + pointsShip[i].x, 
+                 center.getY() + pointsShip[i].y);
+        rotate(pt, center, rotation);
+        glVertex2f(pt.getX(), pt.getY());
+    }
+    glEnd();
+}
+\end{minted}
+\rule{\textwidth}{0.4pt}
+\begin{minted}[fontsize=\small, breaklines]{haskell}
+-- Haskell
+drawShip :: SDL.Renderer -> Ship -> IO ()
+drawShip renderer =
+    drawShape renderer . shipPoints
 
+shipPoints :: Ship -> [V2 Double]
+shipPoints s =
+    map (+ sPos)
+        [ -17 *^ (facing - perp facing) -- left
+        ,  25 *^  facing                -- front tip
+        , -17 *^ (facing + perp facing) -- right
+        , -8  *^  facing                -- back
+        ]
+    where
+        sPos = s ^. sPosition . pVect
+        facing = angle $ s ^. sAngle
+\end{minted}
+\rule{\textwidth}{0.4pt}
+
+\caption{Comparing ship drawing in imperative asteroids and pure\babelhyphen{nobreak}asteroids.}
+\label{changethelabelifyousuethisagain}
+\end{listing}
 
 
 \chapter*{Conclusion}
