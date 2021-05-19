@@ -87,10 +87,12 @@
 
 
 
-
-% C++ macro
+% C++ macros
 \newcommand{\cpp}{C\nolinebreak\texttt{+}\nolinebreak\texttt{+}}
-% code listing macros
+\newminted[cppblock]{cpp}{breaklines}
+\newmintinline[inlinecpp]{cpp}{breaklines}
+
+% Haskell macros
 \definecolor{haskellbg}{rgb}{0.95,0.95,0.96}
 \newminted[haskell]{haskell}{
     % frame = leftline,
@@ -100,7 +102,6 @@
     % escapeinside=//,
 }
 \newmintinline[inlinehs]{haskell}{breaklines}
-
 \newcommand{\packagename}{\mintinline{Haskell}}
 
 \newminted[term]{console}{breaklines}
@@ -749,7 +750,7 @@ with a lambda function and a wrapper function around the \inlinehs{SDL.copy} and
 \section{Reflection}
 \label{sect:apecsreflection}
 
-First, from this example alone,
+From this example alone,
 we learn that Apecs makes game programming in Haskell surprisingly accessible.
 Once we understand the ECS principle, every world modification is
 \say{intuitively imperative} thanks to the \inlinehs{SystemT w m a} monad and
@@ -827,12 +828,12 @@ benefits of purely functional programming.
 \label{sect:pureengines}
 
 In the previous chapter we see how a program in Haskell can still be
-written in a very imperative style. This is manifested in the ever present
-monads keeping state and access to I/O and the numerous \inlinehs{do} blocks.
+written in a very imperative style. 
 This is certainly a valid approach and has its benefits as we discuss
 further in chapter \ref{chptr:evaluation} but for the second version of
 Asteroids (project \emph{pure-asteroids}) we focus on functional purity,
 clarity and proper compartmentalization.
+
 The design is inspired by a keynote\cite{carmackkeynote} of John Carmack, the co-founder
 of id~Software and co-creator of the Doom and Quake games.%\cite{carmackbio}
 At one point in the keynote he talks about how he had been moving towards
@@ -848,7 +849,9 @@ The world-updating function can be split into individual sub-functions that upda
 of entities. Each sub-function is passed the game world and the group of entities and
 it returns the updated group, therefore, in Haskell, such function cannot affect
 anything outside of the group it returns. For that reason, it could be easily run
-in parallel, increasing the performance. With this approach, comes one more advantage
+in parallel, increasing the performance.
+
+With this approach, comes one more advantage
 --- all entities are being updated based on the same image of past state, meaning
 it does not matter in what order entities are updated, the result will be the same.
 This can be contrasted with a naive imperative approach, where entities are
@@ -964,8 +967,8 @@ data ShipState
 \label{lst:pureship}
 \end{listing}
 
-Listing \ref{lst:events} shows the event package type \inlinehs{WorldEvents}. It
-has an instance of \inlinehs{Monoid}, which allows us to collect the packages from
+Listing \ref{lst:events} shows the event package type \inlinehs{WorldEvents}.
+It also has an instance of \inlinehs{Monoid}, which allows us to collect the packages from
 each entity group and combine them into one in the \textbf{stepper function}
 and then we distribute the events to their addressed entity groups in \textbf{event processing}.
 The individual event types and the information they carry are described later,
@@ -1107,18 +1110,17 @@ shoot input w =
         then insertBullet
         else id
 \end{haskell}
-% TODO typography?? colon + coma?
-we immediately see from the name and the type signature that the function presumably
+We immediately see from the name and the type signature that the function presumably
 somehow alters the collection of \inlinehs{Bullet}s based on the input and that
 the alteration is probably adding a new bullet, which is confirmed by looking
 at the next four lines of light code. And this also means that it is \emph{the only thing}
 the function can do --- it clearly can't change the state of the ship, read from a file
 or render a white square.
 
-Related to expressiveness, is what we may call \say{functional elegance}.
+It also incorporates what we may call \say{functional elegance}.
 Throughout the code base, we use functions like \inlinehs{map}, \inlinehs{filter},
-\inlinehs{fold}, \inlinehs{traverse} and many others, that make the code brief
-and save us time.
+\inlinehs{fold}, \inlinehs{traverse} and many others, that Haskell programmers are familiar
+with and which make the code brief and save us time.
 
 Most importantly, as we demonstrated, the design could be adapted to
 use parallelism, which we expect would increase performance.
@@ -1131,7 +1133,7 @@ However, even though we could use parallelism, the scalability of our design is 
 It would be appropriate to use more classes in general. A class interface for
 collision detection, stepping, communication using events and for resources abstraction.
 Pure-asteroids is too explicit, which makes it relatively rigid
---- changes can be made but they require more work since adding a random number
+--- adding a random number
 generator to a bottom-level function, requires passing it from the top level
 as an argument through the whole function chain. And the long type signatures of the
 top-level functions make them actually less clear.
@@ -1197,27 +1199,139 @@ were reached.
 note: replace "safeness" with "security"?
 
 \section{Comparison}
+% TODO: show a part of code where hAsteroids looks close to the c++
 
 address how this is not meant to be an evaluation of imperative languages,
 even though we are comparing against them and critiquing them
 --- especially against \cpp{} which does not fully represent all the imperative languages
 
-\subsection{pure-asteroids \vs imperative Asteroids}
+\subsection{Flexibility and scalability}
 
-\subsection{pure-asteroids \vs hAsteroids}
+Both \textbf{hAsteroids} and \textbf{imperative asteroids} are very flexible designs.
+Because in hAsteroids, the monad return type of most functions is not very
+restrictive at all, we can add in and take away effects or resources with ease.
+Similarly the imperative version is highly flexible in this sense. When it comes
+to scalability, both do decently well. Adding new game objects in hAsteroids can be done by
+defining more components and needed systems. Already existing components and systems can be reused
+like \inlinehs{Position}, \inlinehs{Velocity} and \inlinehs{stepKinetics}.
+One issue would be the expansion of collision detection,
+which is done on an individual basis, therefore the amount of work
+would grow linearly with increasing number of game objects.
+Imperative Asteroids do better in this regard --- kinetic properties can
+be inherited from \inlinecpp{FlyingObject} as well as the ability to detect collisions.
+The issue there might be if we wanted to inherit only parts of \inlinecpp{FlyingObject}.
+Also with large scale, the safeness becomes more of a concern for both games
+--- more on that in the following subsection.
 
-\subsection{hAsteroids \vs imperative Asteroids}
-They are surprisingly similar.
+We have already described how \textbf{pure-asteroids} are rather rigid because of
+their lack of abstraction. Scalability is also worse than the other two, since
+adding new objects would require writing their whole \say{substepper} and
+new event paths, and collision detection is handled similarly to hAsteroids.
 
-The difference (or lack there of??) between monad state and an implicit object state.
-Separation of effectful and uneffectful code - monad and const keyword.
+\subsection{Expressiveness and safeness}
 
-Haskell can be a very imperative language
+As we have already discussed in chapter \ref{chap:motivationandmethods},
+functional languages are designed to be clearer (\emph{expressiveness})
+and to have better control of side effects (\emph{safeness}) then conventional
+imperative languages. Now the imperative code can be even more or less unsafe
+depending on its type system. \cpp{} is mostly strongly and statically typed, which
+does provide a certain amount of assurance, some other languages are not.
+This can protect us from trying to add an object to a number for instance.
+
+Many languages also take various steps towards controlling side effects.
+One such example could be the \inlinecpp{const} keyword used to define a variable
+that cannot be mutated. In \cpp{} this keyword can also be used on methods
+to prevent them from changing the state of the object, allowing us to call these
+methods even on \inlinecpp{const} objects. Usage of this keyword, would prevent
+the author of imperative asteroids from writing this drawing function that
+unexpectedly also changes the state of bullets:
+\begin{cppblock}
+void Game::draw(const Interface &ui) {
+
+    /* ... other objects are drawn... */
+    
+    for (int i = 0; i < bullets.size(); i++) {
+        if (bullets[i]->isAlive()) {
+            bullets[i]->draw();
+            bullets[i]->setHealth(); // a setter?!
+        }
+    }
+}
+\end{cppblock}
+However, languages like Java or Python do not support immutable objects
+and we can see how control of side effects in general is a \say{plan B} in the imperative paradigm.
+
+Conversely, since Haskell originated as an academic language,
+functional purity was allowed to be plan A and having
+side effects was actually the plan B in this case. We saw how this works out well for expressiveness
+in the example of \textbf{pure-asteroids} as showcased at the beginning of section \ref{sect:purereflection}.
+And because all variables are immutable, change is made explicit as a \emph{new} returned value
+that we pass forward.
+Moreover, any input/output side effects are clearly separated by the \inlinehs{IO} monad
+and the rest of the code is completely deterministic, which all together with strong static typing
+makes for a very safe language.
+
+That is, if used well --- \textbf{hAsteroids} turned out to be a very interesting game.
+Apecs makes game programming in Haskell approachable and provides
+very good performance by being \emph{strict and imperative}. This inner imperativness
+makes purity sort of a plan B again, and the programmer has to be clever about using monad polymorphism
+if they want to keep \say{the danger of \inlinehs{IO}} contained. This has occurred to us in the middle
+of the hAsteroids development process and so we decided to embrace it and see where it leads.
+If we redesigned the types we could have reached better safeness and even expressiveness, however,
+with the game world sate abstracted it is still not always clear what functions do
+when applied through \inlinehs{cmapM} or \inlinehs{cmapM_}.
+
+
+
+\subsection{Development costs}
+
+- development speed and comfort
+
+- ease of testing and debugging\\
+how do you test this:
+\begin{cppblock}
+// Move each of the bullets forward if it is alive
+void Game::advanceBullets() {
+    for (int i = 0; i < bullets.size(); i++) {
+        if (bullets[i]->isAlive()) {
+            bullets[i]->advance();
+            if (!isOnScreen(bullets[i]->getPoint())) {
+                bullets[i]->kill();
+            }
+        }
+    }
+}
+\end{cppblock}
+how OOP objects model state of their methods
+
+\subsection{Performance}
+
+do benchmarks profiling if time
+
+
+% \subsection{pure-asteroids \vs imperative Asteroids}
+
+% \subsection{pure-asteroids \vs hAsteroids}
+
+% Both implementations are technically functional and both technically separate
+% pure code from impure code with \inlinehs{IO}. But we have already mentioned
+% how hAsteroids does not leverage the type system to do so.
+
+% \subsection{hAsteroids \vs imperative Asteroids}
+
+% They are surprisingly similar.
+
+% The difference (or lack there of??) between monad state and an implicit object state.
+% Separation of effectful and uneffectful code - monad and const keyword.
+
+% Haskell can be a very imperative language
 
 \subsection{Code statistics}
+Some statistics about code length and keyword usage perhaps here for fun
 
 
-\section{Emerging dilemmas}
+% Further discussion about programming theory
+\section{Observed dilemmas}
 
 \subsection{Flexibility \vs safeness}
 
@@ -1253,6 +1367,10 @@ in lazy languages, and confirmed what we see in hAsteroids ---  with the \inline
 Haskell can very closely resemble C. Yet, it keeps the benefits of functional style intact by
 clearly separating the imperative from the functional.
 
+perhaps also quote Carmack again, when he said how over the years of supervising
+hundreds of programmers working of thousands and thousands of lines of code, he saw that
+anything that is legal for the compiler will end up in your code base eventually
+--- Haskell's "brutal" functional purity is a win
 
 
 
