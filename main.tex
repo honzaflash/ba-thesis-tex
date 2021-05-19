@@ -1201,19 +1201,20 @@ Then we discuss the conflicts observed in the comparisons and finally summarize 
 % TODO: show a part of code where hAsteroids looks close to the c++
 
 In this section we compare the three example implementations or more broadly Haskell and
-imperative languages represented by \cpp{}. Keep in mind that \cpp{} is by no means meant
+imperative languages represented by \cpp{}. It is important to note that \cpp{} is by no means meant
 to represent imperative languages fully, even less so is the chosen imperative implementation
-of Asteroids (further referred to as imperative Asteroids) meant to represent
+of Asteroids (further referred to as imp-asteroids) meant to represent
 the ideal of a game in \cpp{}. We try to address this in especially relevant places,
 in others, it is left out for the sake of conciseness and readability.
 The comparison is organized by qualities important in game development:
 flexibility and scalability, expressiveness and safeness, development costs, performance.
-The section is then closed off with few statistical observations.
+The section is then closed off by additional comparison of state abstraction
+and with few statistical observations about the code bases.
 
 
 \subsection{Flexibility and scalability}
 
-Both \textbf{hAsteroids} and \textbf{imperative asteroids} are very flexible designs.
+Both \textbf{hAsteroids} and \textbf{imp-asteroids} are very flexible designs.
 Because in hAsteroids, the monad return type of most functions is not very
 restrictive at all, we can add in and take away effects or resources with ease.
 Similarly the imperative version is highly flexible in this sense. When it comes
@@ -1223,7 +1224,7 @@ like \inlinehs{Position}, \inlinehs{Velocity} and \inlinehs{stepKinetics}.
 One issue would be the expansion of collision detection,
 which is done on an individual basis, therefore the amount of work
 would grow linearly with increasing number of game objects.
-Imperative Asteroids do better in this regard --- kinetic properties can
+imp-asteroids do better in this regard --- kinetic properties can
 be inherited from \inlinecpp{FlyingObject} as well as the ability to detect collisions.
 The issue there might be if we wanted to inherit only parts of \inlinecpp{FlyingObject}.
 Also with large scale, the safeness becomes more of a concern for both games
@@ -1249,7 +1250,7 @@ One such example could be the \inlinecpp{const} keyword used to define a variabl
 that cannot be mutated. In \cpp{} this keyword can also be used on methods
 to prevent them from changing the state of the object, allowing us to call these
 methods even on \inlinecpp{const} objects. Usage of this keyword, would prevent
-the author of imperative asteroids from writing this drawing function that
+the author of imp-asteroids from writing this drawing function that
 unexpectedly also changes the state of bullets:
 \begin{cppblock}
 void Game::draw(const Interface &ui) {
@@ -1269,14 +1270,16 @@ and we can see how control of side effects in general is a \say{plan B} in the i
 
 Conversely, since Haskell originated as an academic language,
 functional purity was allowed to be plan A and having
-side effects was actually the plan B in this case. We saw how this works out well for expressiveness and clarity
-in the example of \textbf{pure-asteroids} as showcased at the beginning of section \ref{sect:purereflection}.
+side effects was actually the plan B in this case.
+We saw how this together with the type system works out well for expressiveness and clarity
+in the example of \textbf{pure-asteroids}, as showcased on an exemplary function
+at the beginning of section \ref{sect:purereflection}.
 And because all variables are immutable, change is made explicit as a \emph{new} returned value
 that we pass forward.
 Moreover, any input/output side effects are clearly separated by the \inlinehs{IO} monad
 and the rest of the code is completely deterministic, which all together with strong static typing
 makes for a very safe language --- not only there is less potential sources of bugs, but the
-correctness of a program is easier to perceive and argue about.
+correctness of a program is \emph{easier to perceive} and argue about.
 
 That is, if used well --- \textbf{hAsteroids} turned out to be a very interesting game.
 Apecs makes game programming in Haskell approachable and provides
@@ -1318,7 +1321,7 @@ Furthermore, there is many predefined high-order functions like
 job is already done and we only need to provide the elemental function to fold with for instance.
 This together with being able to partially apply functions allows us to write
 very \textbf{brief and elegant code}. In listing \ref{lst:elegance} we can see asteroid stepper implementations
-from imperative asteroids and pure-asteroids.\footnote{
+from imp-asteroids and pure-asteroids.\footnote{
 The \cpp{} version also spawns new wave of asteroids if the current has been cleared.
 That part of code was omitted as it is irrelevant for the example.
 } The Haskell version uses \inlinehs{map} with a partially applied function,
@@ -1364,7 +1367,7 @@ Due to time constraints and the simple nature of Asteroids we did not use
 any automated tests during our development. Still, to substantiate
 the claim of easier testing we look at the two functions\footnotemark in listing \ref{lst:testingexamp}
 and consider how we would go about testing them. 
-\footnotetext{ The examples are again taken from imperative asteroids and pure-asteroids.
+\footnotetext{ The examples are again taken from imp-asteroids and pure-asteroids.
 \inlinehs{stepBullets} has been simplified in this case. The real version also
 inserts new bullets based on the input state, which happens elsewhere in the \cpp{} implementation.
 }
@@ -1421,6 +1424,7 @@ very simple. Yet, we can imagine that with a larger game we would start
 to feel the need for more tools.
 
 
+
 \subsection{Performance}
 
 Performance in games is very important since there is a real minimum requirement
@@ -1439,21 +1443,19 @@ on branch called \say{bench}:\\
 \url{https://github.com/honzaflash/ba-thesis/tree/bench/hAsteroids}\\
 \url{https://github.com/honzaflash/ba-thesis/tree/bench/pure-asteroids}
 }
-The games were altered to spawn different quantities of asteroids and
+The games were altered to spawn various, abnormal quantities of asteroids and
 run for ten seconds with the ship constantly spinning and shooting one bullet per frame.
-The results are rather illustrational as the differences between games were not controlled
-very well: impure asteroids uses GLUT with the FPS limited to maximum of 59, because of issues
+Note that the results are rather illustrational as the differences between games were not controlled
+very well: imp-asteroids uses GLUT with the FPS limited to maximum of 59, because of issues
 with Stack on Windows the Haskell games were run in the interpreter, hAsteroids renders
-textures instead of drawing vectors like the other two and other minor differences.
-The results can be seen in table \ref{tab:benchfps}.
-We ran the test for 100 asteroids also in a virtual machine with Ubuntu,
-where \inlinehs{stack build} works normally, and the results were very different:
-46, 21 and 34 FPS respectively for imperative asteroids, hAsteroids and pure-asteroids.
+textures instead of drawing vectors like the other two and there are other minor differences.
+The benchmark was run at least 3 times for every asteroid count and the median is shown
+in the results in table \ref{tab:benchfps}.
 
 \begin{table}
   \begin{tabularx}{\textwidth}{|r|llX|}
     \toprule
-    Asteroid count & \textbf{impure asteroids} & \textbf{hAsteroids} & \textbf{pure-asteroids} \\
+    Asteroid count & \textbf{imp-asteroids} & \textbf{hAsteroids} & \textbf{pure-asteroids} \\
     \midrule
     10000 & 41 & 2   & 1   \\
     500   & 59 & 30  & 16    \\
@@ -1462,19 +1464,25 @@ where \inlinehs{stack build} works normally, and the results were very different
     50    & 59 & 74  & 92 \\
     25    & 59 & 117 & 140 \\
     10    & 59 & 141 & 154 \\
-    5 + 200 UFOs & -- & 8 & 83 \\
+    % 5 + 200 UFOs & -- & 8 & 83 \\
     \bottomrule
   \end{tabularx}
   \caption{Average FPS in the benchmarks.}
   \label{tab:benchfps}
 \end{table}
 
-Unfortunately, due to time constraints we did not diagnose the cause of these behaviours,
-however, we can assume, what appears to be true in other fields and what is reflected
-in the compiled benchmarks, that Haskell is mostly comparable to \cpp{} in performance,
-and then as we expected, that apecs is faster than non-ECS data model for higher entity counts.
+We ran the benchmark for 100 asteroids also in a virtual machine with Ubuntu,
+where \inlinehs{stack build} worked normally, and the results were quite different
+even if we account for the slower \say{virtual hardware}:
+46, 21 and 34 FPS respectively for imp-asteroids, hAsteroids and pure-asteroids.
+From these results with all three games being compiled we can assume,
+what is said to be true for Haskell in other fields,
+that its performance is mostly comparable to \cpp{}.
+Unfortunately, we did not have time to diagnose why apecs performed so poorly in this case.
+However, when comparing the two versions (hAsteroids and pure-asteroids) running in GHCi,
+hAsteroids with apecs does outperform pure-asteroids for higher entity counts as we expected.
 
-Worthy of noting is also the bit of profiling we did on the runs in Ubuntu.
+Worthy of noting is also the profiling we did on the runs in Ubuntu.
 Most importantly it showed that neither of the games had issues with Garbage Collection (GC)
 as this can become a problem with larger lazy systems.
 The productivity reported by the \mintinline{console}{-s} profiling flag was 99.1 \%
@@ -1492,29 +1500,127 @@ which has high level of abstraction and during compilation goes through \emph{th
 languages, therefore if one desires to see how the code gets \say{unabstracted}, he must
 first learn at least the first of the intermediate languages --- Core.
 To make up for this at least partially, as we have also stated before,
-GHC can do a lot of optimizing on its own and purely functional code is easier
+GHC can do a lot of optimizing on its own and purely functional code is also easier
 to execute in parallel and concurrently, which Haskell is very good at.
 
+
+
+\subsection{State abstraction}
+One of the largest differences between the implementations is how they model game's state.
+Through this prism we can see once again how \textbf{hAsteroids} and \textbf{imp-asteroids}
+are very similar. As we have mentioned before, because of the abstraction,
+the code in hAsteroids has a certain amount of imperative style and that includes the state
+of the game world kept in a monad. Similarly, despite \cpp{} having a lower-level
+approach to memory and some other things, the object-oriented paradigm allows us
+to abstract the state in a relatively elegant way. Object's attributes
+define its current state, which is implicitly passed to any of its methods.
+% \begin{cppblock}
+% // this:
+% strt o2(); // construct instance of strt struct
+% set(o2, true); // call a function
+% // can be abstracted into this:
+% obj o1(); // construct instance of obj class
+% o1.set(true); // call a method
+% \end{cppblock}
+
+The monad state is technically pure because in reality,
+its change is only a computation hidden behind the \inlinehs{>>=} operator,
+that passes the change as a \emph{new} value forward without any mutation,
+and the operator itself then can be further hidden using the \inlinehs{do} block.\footnote{
+Reminder: \inlinehs{do str <- getLine; putStr str} is a shorthadnd for
+\inlinehs{getLine >>= (\str -> putStr str)}
+}
+But from a practical standpoint, there is only a little difference between a monad state
+and an object's state. Just as an object gives a context to a method's side effects,
+a state monad gives context to the monadic computation's side effects.
+In the same way that an object stored in a single variable is changed, a monad state
+can change without any outer signs. Listing \ref{lst:state} shows how similar
+are the main game loops.
+
+\begin{listing}
+\begin{haskell}
+-- gameLoop returns SystemWithResources ()
+reactToInput deltaTime
+stepScene deltaTime
+drawScene
+\end{haskell}
+\begin{cppblock}
+// pGame is a pointer to Game object
+pGame->advance();
+pGame->handleInput(*pUI);
+pGame->draw(*pUI);
+\end{cppblock}
+\caption{Inside of the main loop in hAsteroids and imp-asteroids.}
+\label{lst:state}
+\end{listing}
+
+This brings us to the argument of why we want to avoid mutability in the first place.
+Mutability makes code harder to reason about, easier to make mistakes in and
+very difficult to run in parallel. Granted, since the state monad is technically
+pure, the hidden syntax will not allow shared mutability,
+which is what makes parallel systems complicated.
+With that in mind, it also makes some things much simpler to program.
+
+As we have already pointed out, \textbf{pure-asteroids} steers clear of monads when possible,
+modeling the state explicitly. This does indeed make things easier to reason about,
+but it was much more complicated to write.
+
+We discuss this need for balance later, in section \ref{sect:dilemmas} about the observed dilemmas.
 
 
 \subsection{Code statistics}
 \label{sect:codestats}
 
-Some statistics about code length and keyword usage perhaps here for fun\\
+As a bonus we include few simple statistics about code length.
+We counted the lines, words\footnote{
+\mintinline{console}{wc} defines word
+as a sequence of any printable characters delimited by white space.
+}
+and characters using the \mintinline{console}{wc} command.
+Then we plotted the total line counts (figure \ref{fig:codelength}) and
+ratios between words, lines and characters in each file (figure \ref{fig:codedensity})
+using Python and \packagename{seaborn}. We must take into account the differences between
+the implementations because imp-asteroids uses a custom drawing library
+built around GLUT, which includes several lengthy line drawing functions and
+it is much more heavily commented\footnote{
+Using \mintinline{console}{grep} we found 850 lines of comments in the imp-asteroids project
+and only 110 and 50 in hAsteroids and pure-asteroids.
+}
+, but it also does not implement UFOs, score, ship lives or menus.
 
-imp asteroids does implement some extra stuff and has buttloads of comments,
-but also does not have ufos
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/total_lines_by_project.png}
+    % \includegraphics[width=0.49 \textwidth]{images/total_words_by_project.png}
+    % \includegraphics[width=0.49 \textwidth]{images/total_chars_by_project.png}
+    \caption{Total number of lines by project.}
+    \label{fig:codelength}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/lwc_density_by_project.png}
+    \caption{Code density by project.}
+    \label{fig:codedensity}
+\end{figure}
+
+From the ratios in figure \ref{fig:codedensity} we see that the code has similar density,
+therefore we know it is not shorter lines inflating the total line count, but generally longer code.
+This further supports the claim for Haskell's ability to be brief and concise.
+We can also notice the slight, opposite tendencies of words per lines and characters per words.
+It would appear that in the \cpp{} code, words are longer and there is less of them per line,
+which can be explained by \mintinline{console}{wc} understanding strings like
+\inlinecpp{asteroids.erase(it);} as one word as are understood also operators, more frequent in Haskell.
+
 
 % ----------------------------------------------------------
-% \subsection{pure-asteroids \vs imperative Asteroids}
-
 % \subsection{pure-asteroids \vs hAsteroids}
 
 % Both implementations are technically functional and both technically separate
 % pure code from impure code with \inlinehs{IO}. But we have already mentioned
 % how hAsteroids does not leverage the type system to do so.
 
-% \subsection{hAsteroids \vs imperative Asteroids}
+% \subsection{hAsteroids \vs imp-asteroids}
 
 % They are surprisingly similar.
 
@@ -1524,10 +1630,13 @@ but also does not have ufos
 % Haskell can be a very imperative language
 % ------------------------------------------------------------
 
+
 % Further discussion about programming theory
 \section{Observed dilemmas}
+\label{sect:dilemmas}
 
 \subsection{Flexibility \vs safeness}
+
 
 \subsection{Abstraction \vs expressiveness}
 
@@ -1610,7 +1719,7 @@ for some reason \inlinehs{draw()} increments the asteroid rotation
 
 consistency - with apecs the result could differ based on the order in which
 entities are iterated over (\# todo - make sure it is that way + apecs-stm solves this (?)),
-pure-asteroids naturally step regardless of order and imperative asteroids use a flag to mark
+pure-asteroids naturally step regardless of order and imp-asteroids use a flag to mark
 objects for destruction and then do it later
 
 \subsection{Detecting and handling collisions}
@@ -1777,7 +1886,7 @@ shipPoints s =
 \end{minted}
 \rule{\textwidth}{0.4pt}
 
-\caption{Comparing ship drawing in imperative asteroids and pure\babelhyphen{nobreak}asteroids.}
+\caption{Comparing ship drawing in imp-asteroids and pure\babelhyphen{nobreak}asteroids.}
 \label{changethelabelifyousuethisagain}
 \end{listing}
 
