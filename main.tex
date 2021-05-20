@@ -1192,8 +1192,9 @@ effects can be everywhere -> high flexibility low safeness
 \label{chptr:evaluation}
 
 In this chapter we first compare Haskell to imperative languages in general or specifically to \cpp{},
-referencing back to the promised benefits of Haskell from section \ref{sect:whyfpmatters}.
-Then we discuss the conflicts observed in the comparisons and finally summarize our findings.
+often referencing back to the promised benefits of Haskell from section \ref{sect:whyfpmatters}.
+Then we discuss the conflicts observed in the comparisons and their possible solutions
+and finally summarize our findings.
 
 % note: replace "safeness" with "security"?
 
@@ -1201,15 +1202,21 @@ Then we discuss the conflicts observed in the comparisons and finally summarize 
 % TODO: show a part of code where hAsteroids looks close to the c++
 
 In this section we compare the three example implementations or more broadly Haskell and
-imperative languages represented by \cpp{}. It is important to note that \cpp{} is by no means meant
+imperative languages represented by \cpp{}.
+For this we reference the previous chapters about individual implementations.
+It is important to note that \cpp{} is by no means meant
 to represent imperative languages fully, even less so is the chosen imperative implementation
 of Asteroids (further referred to as imp-asteroids) meant to represent
-the ideal of a game in \cpp{}. We try to address this in especially relevant places,
+the ideal of a game in \cpp{}. Not only it has flaws but it is also an even
+simpler version of the original game in some ways than our two implementations.
+We try to address this in especially relevant places,
 in others, it is left out for the sake of conciseness and readability.
+
 The comparison is organized by qualities important in game development:
 flexibility and scalability, expressiveness and safeness, development costs, performance.
 The section is then closed off by additional comparison of state abstraction
 and with few statistical observations about the code bases.
+
 
 
 \subsection{Flexibility and scalability}
@@ -1234,6 +1241,8 @@ We have already described how \textbf{pure-asteroids} are rather rigid because o
 their lack of abstraction. Scalability is also worse than the other two, since
 adding new objects would require writing their whole \say{substepper} and
 new event paths, and collision detection is handled similarly to hAsteroids.
+
+
 
 \subsection{Expressiveness and safeness}
 
@@ -1300,10 +1309,11 @@ The purpose of any language feature can ultimately be seen as reducing the cost 
 By development costs, we mean mainly time and endured frustration. Generally speaking,
 any piece of software can be written in any language, what differs is the cost.
 }
-The already discussed Haskell features all bring the costs down but there is more,
+The already discussed Haskell features all bring the costs down in certain scenarios, but there is more
 that we want to look at through the lens of development speed and comfort.
 Both \textbf{pure-asteroids} and \textbf{hAsteroids} more or less benefit from these.
 
+\subsubsection{Interpreter}
 One of such features is \textbf{GHCi}, \say{GHC's interactive environment,
 in which Haskell expressions can be interactively evaluated and programs can be interpreted.}\cite{ghciwiki}
 % https://wiki.haskell.org/GHC/GHCi
@@ -1316,6 +1326,7 @@ which allows you to search the Haskell libraries on Stackage by either function 
 or by approximate type signature.}\cite{hoogle} This makes searching for functions easier
 and can prevent \say{wheel reinvention}.
 
+\subsubsection{Functional elegance}
 Furthermore, there is many predefined high-order functions like
 \inlinehs{map}, \inlinehs{filter}, \inlinehs{foldl} and so forth. This way a part of the
 job is already done and we only need to provide the elemental function to fold with for instance.
@@ -1355,6 +1366,7 @@ stepAsteroids dT = HM.map (stepAsteroid dT)
 \label{lst:elegance}
 \end{listing}
 
+\subsubsection{Testing and debugging}
 Another benefit discussed at the beginning in section \ref{sect:whyfpmatters}
 is \textbf{ease of testing and debugging}. Testing a pure function is as simple or as complicated
 as the function's parameters and its output. Testing an impure function is
@@ -1363,8 +1375,8 @@ its definition we do not know weather it reads from a file or not for instance.
 Practically, we do not need to be completely exhaustive and can make assumptions,
 however, those unchecked assumptions are the weak spots that may cause problems.
 
-Due to time constraints and the simple nature of Asteroids we did not use
-any automated tests during our development. Still, to substantiate
+Due to time constraints, Haskell's safeness and the simple nature of Asteroids,
+we did not use any automated tests during our development. Still, to substantiate
 the claim of easier testing we look at the two functions\footnotemark in listing \ref{lst:testingexamp}
 and consider how we would go about testing them. 
 \footnotetext{ The examples are again taken from imp-asteroids and pure-asteroids.
@@ -1405,16 +1417,19 @@ many of which are \inlinecpp{private}. That requires refactoring and
 the same applies to testing the state after \inlinecpp{advanceBullets} has been called.
 Additionally, we may want to test not only weather the collection of bullets has
 changed correctly but also weather the rest of the state is correct.
+
 \textbf{hAsteroids} is no better as the test needs to run inside of the \inlinehs{SystemT w m a} monad,
 where we set up components using \inlinehs{newEntity} function and then after running
 tested system checking the validity of all the components.
 
+\subsubsection{Tools}
 Lastly, an obvious disadvantage is the fact that writing a game in Haskell
 is still largely a pioneering process. There is a decent amount of existing general tools,
 one of them being the already described interpreter,
 which can also be used to setup breakpoints and step through evaluation.
-More extensive debuggers like Hat exist and package and project managers like Cabal
-and Stack also speed up development. However, In terms of game development specific tools
+More extensive debuggers like Hat exist as well and package and project managers like Cabal
+and Stack also speed up development. However, even some general tools such as a robust IDE
+are easier to find for other languages and in terms of game development specific tools,
 there is not many besides the several libraries like apecs listed in section \ref{sect:existing}.
 This can be contrasted with the complete, general engines, that come included with 
 tools for the whole development pipeline such as Unity.
@@ -1564,8 +1579,8 @@ With that in mind, it also makes some things much simpler to program.
 As we have already pointed out, \textbf{pure-asteroids} steers clear of monads when possible,
 modeling the state explicitly. This does indeed make things easier to reason about,
 but it was much more complicated to write.
-
 We discuss this need for balance later, in section \ref{sect:dilemmas} about the observed dilemmas.
+
 
 
 \subsection{Code statistics}
@@ -1631,11 +1646,74 @@ which can be explained by \mintinline{console}{wc} understanding strings like
 % ------------------------------------------------------------
 
 
+
+
 % Further discussion about programming theory
 \section{Observed dilemmas}
 \label{sect:dilemmas}
 
+Here we discuss further the conflicts observed in the previous section
+and suggest possible better compromises or solutions.
+% Namely we ponder about the tension between flexibility and safeness
+% and between abstraction and expressiveness.
+
+
+
 \subsection{Flexibility \vs safeness}
+We saw examples of two extremes --- pure-asteroids with high safeness but low flexibility
+and hAsteroids together with imp-asteroids with high flexibility but low safeness.
+It may seem as though the two are mutually exclusive, and admittedly a unbound flexibility
+or rather freedom cannot be achieved at the same time as complete safeness rooted in control
+and limits. However, it definitely is possible to design a system that includes
+constraints and control implemented in a relatively flexible way. We would argue that
+a complete freedom of side effects and computation is rarely even desirable.
+It may be tolerable for smaller programs, possibly beneficial for simple scripts,
+but for any application larger, programmers are taught \say{good practices} such as
+\say{do not use global variables} and \say{do not use goto.}
+With good practises, a safe design can be achieved in a language like C as well
+but modern languages are here to help us and save us time and money.
+For this reason it is of great use when a language supports strong control
+of side effects.
+
+Being able to compromise on unlimited side effects then, we believe that a reasonably flexible
+system can by designed in Haskell, which is also very safe.
+The addition of type-classes was a great break through for Haskell and it is exactly this
+feature that is used for good, modular, flexible and safe design of complex systems.
+Type-classes are used to put constraints on types and can be also compounded,
+that way the addition or removal of limits is relatively easy.
+This not only helps controlling the return type, but can also help
+with polymorphous arguments, making code more useful while staying safe.
+
+We have criticized both of our own implementations for the way they model state
+and pass along resources or access to \inlinehs{IO}. In listing \ref{lst:dream}
+we can see a modular design.
+
+\begin{listing}
+\begin{haskell}
+class ResConfig m where
+    forConfig :: m -> String
+
+class ResRandom m where
+    forRandom :: m -> [Int]
+
+
+data Resources =
+    Res
+    { config :: String
+    , random :: [Int]
+    }
+
+instance ResConfig Resources where
+    forConfig = config
+    
+instance ResRandom Resources where
+    forRandom = random
+\end{haskell}
+\caption{Modular reader monad design.}
+\end{listing}
+
+We have argued through out this thesis the benefits of controlled side effects
+
 
 
 \subsection{Abstraction \vs expressiveness}
@@ -1643,11 +1721,10 @@ which can be explained by \mintinline{console}{wc} understanding strings like
 to abstract or not to abstract\\
 object state is a similar abstraction to monad state\\
 
-\subsection{...?}
 
 
 % RECAP and final EVALUATION
-\section{Recapitulation / Final lesson}
+\section{Recapitulation / Final lesson -- draft/notes}
 
 it is said that Garbage Collection (GC) can be a problem in Haskell
 with interactive real-time applications like video games, but it has been proven that
