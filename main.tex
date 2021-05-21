@@ -348,7 +348,7 @@ all examples of the high-level bindings:
     \item \inlinehs{SDL.pollEvents}\\
     is called to get input events.
 \end{itemize}
-In listing \ref{lst:ffi}, we can see how FFI is used. It shows \inlinehs{SDL.copy},
+In Listing~\ref{lst:ffi}, we can see how FFI is used. It shows \inlinehs{SDL.copy},
 which wraps around the low-level binding, abstracting from the pointers,
 replacing them with Haskell's \inlinehs{Maybe},
 and throwing an error instead of returning a negative value.
@@ -483,7 +483,7 @@ Systems also create new \textbf{entities},
 as creating them means to write some components under a new ID.
 
 First, defining a \textbf{component} means to define an instance of the type-class
-\inlinehs{Component}, as we see in the listing \ref{lst:component}.
+\inlinehs{Component}, as we see in the Listing~\ref{lst:component}.
 The \inlinehs{Component} class
 requires us to state how we want to store the given component
 by assigning a type alias to the specific storage type.
@@ -500,7 +500,7 @@ which uses Template Haskell to generate \inlinehs{World} product type
 along with \inlinehs{initWorld} function and instances of the \inlinehs{Has}
 type-class needed for altering contents of \inlinehs{World} through
 the other functions in apecs. The resulting \inlinehs{World}
-may look close to something as shown in listing \ref{lst:world}.
+may look close to something as shown in Listing~\ref{lst:world}.
 
 \begin{listing}[H]
 \caption{Simplified world state type example.}
@@ -528,7 +528,7 @@ accepts a tuple of components and adds them into their records under a new ID.
 %           )
 % \end{haskell}
 More noteworthy functions to build systems are the component map functions
-shown in the listing \ref{lst:cmaps}. They are the means of altering the world state.
+shown in the Listing~\ref{lst:cmaps}. They are the means of altering the world state.
 \begin{listing}[H]
 \caption{Component maps documentation.\cite{apecsdocs}}
 \begin{haskell}
@@ -576,7 +576,7 @@ Furthermore, with \inlinehs{cmaM_} there is no direct writing, only side effects
 
 \noindent In this section, we outline how we used apecs in the hAsteroids game.
 For the exact implementation, please refer to the attached source files in the hAsteroids directory.
-Figure \ref{fig:hasteroidsmodules} shows project's modules with loosely indicated
+Figure~\ref{fig:hasteroidsmodules} shows project's modules with loosely indicated
 dependencies --- upper modules may have direct dependencies on the lower modules,
 arrows show most important ones. % this miiiighttt be refactored still
 \begin{figure}
@@ -765,7 +765,7 @@ Once we understand the ECS principle, every world modification is
 \say{intuitively imperative} thanks to the \inlinehs{SystemT w m a} monad and
 the component map functions. Any system side effects can be added
 to an existing \inlinehs{cmap} call with a simple change of the return types
-as demonstrated in listing \ref{lst:changingmind}
+as demonstrated in Listing~\ref{lst:changingmind}.
 \begin{listing}[H]
 \begin{haskell}
 -- steer and thrust
@@ -901,7 +901,7 @@ the world updating and drawing differs. The world state passes through
 through \inlinehs{stepWorld}, which simulates physics and game rules and generates new events,
 \inlinehs{drawScene} draws it and \inlinehs{resetIfNewGame} returns a reinitialized
 world only if the loop state is transitioning from \inlinehs{InMenu} to \inlinehs{Playing}.
-This is illustrated in figure \ref{fig:worldeventsflow}.
+This is illustrated in Figure~\ref{fig:worldeventsflow}.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/world-flow-detailed.png}
@@ -919,17 +919,17 @@ how the \textbf{stepper function} and \textbf{event processing} use them.
 
 
 \subsection{Data structures}
-The two main data structures, as already shown in figure \ref{fig:worldeventsflow},
+The two main data structures, as already shown in Figure~\ref{fig:worldeventsflow},
 are the world sate represented by \inlinehs{World} and the events for communication
 between entity groups represented by \inlinehs{WorldEvents}.
 
-The definition of \inlinehs{World} can be seen in listing \ref{lst:pureworld}.
+The definition of \inlinehs{World} can be seen in Listing~\ref{lst:pureworld}.
 \inlinehs{World} contains separate groups of entities and some other state variables.
 \inlinehs{Asteroids}, \inlinehs{Ufos} and \inlinehs{Bullets} are type
 aliases for hash maps of the respective entities.
 The entities themselves then contain similar data as components in hAsteroids,
 only here, the data is all in one place, grouped by the game object.
-Listing \ref{lst:pureship} shows \inlinehs{Ship} definition as an example.
+Listing~\ref{lst:pureship} shows \inlinehs{Ship} definition as an example.
 We can notice the preceding underscores in the record names. This is used
 to generate lenses by using \inlinehs{makeLenses} from the \packagename{mtl} package
 to facilitate easier data manipulation in our nested structures.
@@ -976,7 +976,7 @@ data ShipState
 \label{lst:pureship}
 \end{listing}
 
-Listing \ref{lst:events} shows the event package type \inlinehs{WorldEvents}.
+Listing~\ref{lst:events} shows the event package type \inlinehs{WorldEvents}.
 It also has an instance of \inlinehs{Monoid}, which allows us to collect the packages from
 each entity group and combine them into one in the \textbf{stepper function}
 and then we distribute the events to their addressed entity groups in \textbf{event processing}.
@@ -1004,7 +1004,7 @@ data WorldEvents =
 % stepWorld
 \subsection{Stepper function}
 We can see the combining of event packages happen in the definition of \inlinehs{stepWorld}
-in listing \ref{lst:purestepworld}. The events are returned by
+in Listing~\ref{lst:purestepworld}. The events are returned by
 the individual steppers of each entity group together with the stepped versions
 of those groups. Note how lenses are used to \say{focus} on the contents of world state
 and change them with the setter operator \inlinehs{.~} or the function applicator \inlinehs{%~}
@@ -1038,7 +1038,7 @@ stepWorld dT input rand oldW =
 \label{lst:purestepworld}
 \end{listing}
 
-Figure \ref{fig:entitygroups} shows which events, represented by their value constructors,
+Figure~\ref{fig:entitygroups} shows which events, represented by their value constructors,
 entities may send to others.
 The working of the individual \say{substeppers} can be summarized as follows:
 \begin{itemize}[--]
@@ -1093,7 +1093,7 @@ and then the stepped world is paired with the collected, generated events and re
 
 \subsection{Event processing function}
 
-In listing \ref{lst:pureprocessevents} we can see the implementation of
+In Listing~\ref{lst:pureprocessevents}, we can see the implementation of
 event processing and again the use of lenses.
 Similarly to \inlinehs{stepWorld}, the work is compartmentalized
 and could be made to run in parallel, even though there is not that many
@@ -1133,7 +1133,7 @@ processUfosEvents =
 
 The rest of the subprocessors differ in the function used to apply an event to the collection
 that way fulfilling the request. All the possible events are also shown in the
-Figure \ref{fig:entitygroups}, here we list their value constructor definitions,
+Figure~\ref{fig:entitygroups}, here we list their value constructor definitions,
 and briefly describe what they cause or request:
 \begin{itemize}[--]
     \item \inlinehs{BreakE Int}\\
@@ -1398,7 +1398,8 @@ Furthermore, there is many predefined high-order functions like
 \inlinehs{map}, \inlinehs{filter}, \inlinehs{foldl} and so forth. This way a part of the
 job is already done and we only need to provide the elemental function to fold with for instance.
 This together with being able to partially apply functions allows us to write
-very \textbf{brief and elegant code}. In listing \ref{lst:elegance} we can see asteroid stepper implementations
+very \textbf{brief and elegant code}. In Listing~\ref{lst:elegance},
+we can see asteroid stepper implementations
 from imp-asteroids and pure-asteroids.\footnote{
 The \cpp{} version also spawns new wave of asteroids if the current has been cleared.
 That part of code was omitted as it is irrelevant for the example.
@@ -1444,7 +1445,7 @@ however, those unchecked assumptions are the weak spots that may cause problems.
 
 Due to time constraints, Haskell's safeness and the simple nature of Asteroids,
 we did not use any automated tests during our development. Still, to substantiate
-the claim of easier testing we look at the two functions\footnotemark in listing \ref{lst:testingexamp}
+the claim of easier testing we look at the two functions\footnotemark in Listing~\ref{lst:testingexamp},
 and consider how we would go about testing them. 
 \footnotetext{ The examples are again taken from imp-asteroids and pure-asteroids.
 \inlinehs{stepBullets} has been simplified in this case. The real version also
@@ -1617,7 +1618,7 @@ But from a practical standpoint, there is only a little difference between a mon
 and an object's state. Just as an object gives a context to a method's side effects,
 a state monad gives context to the monadic computation's side effects.
 In the same way that an object stored in a single variable is changed, a monad state
-can change without any outer signs. Listing \ref{lst:state} shows how similar in appearance
+can change without any outer signs. Listing~\ref{lst:state} shows how similar in appearance
 are the main game loops of hAsteroids and imp-asteroids.
 
 \begin{listing}
@@ -1660,8 +1661,8 @@ We counted the lines, words\footnote{
 as a sequence of any printable characters delimited by white space.
 }
 and characters using the \mintinline{console}{wc} command.
-Then we plotted the total line counts (figure \ref{fig:codelength}) and
-ratios between words, lines and characters in each file (figure \ref{fig:codedensity})
+Then we plotted the total line counts (Figure~\ref{fig:codelength}) and
+ratios between words, lines and characters in each file (Figure~\ref{fig:codedensity})
 using Python and \packagename{seaborn}. We must take into account the differences between
 the implementations because imp-asteroids uses a custom drawing library
 built around GLUT, which includes several lengthy line drawing functions and
@@ -1687,7 +1688,7 @@ and only 110 and 50 in hAsteroids and pure-asteroids.
     \label{fig:codedensity}
 \end{figure}
 
-From the ratios in figure \ref{fig:codedensity} we see that the code has similar density,
+From the ratios in Figure~\ref{fig:codedensity} we see that the code has similar density,
 therefore we know it is not shorter lines inflating the total line count, but generally longer code.
 This further supports the claim for Haskell's ability to be brief and concise.
 We can also notice the slight, opposite tendencies of words per lines and characters per words.
@@ -1756,8 +1757,8 @@ This not only helps controlling the return type, but can also help
 with polymorphous arguments, making code more useful while staying safe.
 
 We have criticized both of our own implementations for the way they model state
-and pass along resources or access to \inlinehs{IO}. In listing \ref{lst:dreamdesign}
-we can see a much better modular design suggestion with a usage example in listing \ref{lst:usedream}.
+and pass along resources or access to \inlinehs{IO}. In Listing~\ref{lst:dreamdesign},
+we can see a much better modular design suggestion with a usage example in Listing~\ref{lst:usedream}.
 The monad that allows functions to access any of its contents and perform I/O
 is restricted through polymorphism when subfunctions are called.
 Constraints can be added to a function's type to grant access to more of the state or
@@ -1859,7 +1860,7 @@ That is when abstraction steps in place, and when used wisely, it leads to a
 more understandable code with fewer distractions. All of that, while in the background
 still being technically pure and formally safe.
 
-Figure \ref{fig:4sides} illustrates the relationships between our four identified
+Figure~\ref{fig:4sides} illustrates the relationships between our four identified
 foreground attributes and the two main background attributes we should be seeking.
 \begin{figure}
     \centering
