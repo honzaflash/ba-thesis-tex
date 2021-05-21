@@ -243,7 +243,7 @@ in the game industry, whereas finding their functional counterparts
 might be much more challenging. Additionally, in the case of \cpp{} the performance
 also fits the requirements of big games.
 
-However, it does come with a price --- modules of such programs maybe
+However, it does come with a price --- modules of such programs may be
 more dependent and entangled, which makes the whole less flexible and with
 implicit state more prone to bugs and harder to test and debug.
 That is, while testing is already a significant issue due to the nature of video games.
@@ -437,7 +437,7 @@ organized into \textbf{components}, which are then stored in separate
 lists with other components of the same type from other entities.\cite{mediumecs} This can
 be represented as a table where every column is its own list or array
 (see table \ref{tab:ecsexamp}). Then we define game logic as \textbf{systems}
---- set of functions that operate on certain components regardless of the
+--- a set of functions that operate on certain components regardless of the
 entity as a whole. A typical example of a system is adding an entity's velocity
 to its position for every entity with both of those components.
 ECS usually provide better performance than object-oriented designs (OOD)
@@ -838,7 +838,7 @@ benefits of purely functional programming.
 In the previous chapter we see how a program in Haskell can still be
 written in a very imperative style. 
 This is certainly a valid approach and has its benefits as we discuss
-further in chapter \ref{chptr:evaluation} but for the second version of
+further in chapter~\ref{chptr:evaluation} but for the second version of
 Asteroids (project \emph{pure-asteroids}) we focus on functional purity,
 clarity and proper compartmentalization.
 
@@ -1108,7 +1108,7 @@ maybe do not, and describe the individual event types too
 \label{sect:purereflection}
 
 Overall, pure-asteroids achieves what it sets out to do --- we can observe
-many of the benefits described in section \ref{sect:whyfpmatters}.
+many of the benefits described in section~\ref{sect:whyfpmatters}.
 Because it uses less abstraction, the code is safer and more expressive.
 For example, by looking at \inlinehs{shoot} from the \inlinehs{Step.Bullets} module
 \begin{haskell}
@@ -1199,7 +1199,7 @@ effects can be everywhere -> high flexibility low safeness
 \label{chptr:evaluation}
 
 In this chapter we first compare Haskell to imperative languages in general or specifically to \cpp{},
-often referencing back to the promised benefits of Haskell from section \ref{sect:whyfpmatters}.
+often referencing back to the promised benefits of Haskell from section~\ref{sect:whyfpmatters}.
 Then we discuss the conflicts observed in the comparisons and their possible solutions
 and finally summarize our findings.
 
@@ -1253,7 +1253,7 @@ new event paths, and collision detection is handled similarly to hAsteroids.
 
 \subsection{Expressiveness and safeness}
 
-As we have already discussed in chapter \ref{chap:motivationandmethods},
+As we have already discussed in chapter~\ref{chap:motivationandmethods},
 functional languages are designed to be clearer (\emph{expressiveness})
 and to have better control of side effects (\emph{safeness}) then conventional
 imperative languages. Now the imperative code can be even more or less unsafe
@@ -1289,7 +1289,7 @@ functional purity was allowed to be plan A and having
 side effects was actually the plan B in this case.
 We saw how this together with the type system works out well for expressiveness and clarity
 in the example of \textbf{pure-asteroids}, as showcased on an exemplary function
-at the beginning of section \ref{sect:purereflection}.
+at the beginning of section~\ref{sect:purereflection}.
 And because all variables are immutable, change is made explicit as a \emph{new} returned value
 that we pass forward.
 Moreover, any input/output side effects are clearly separated by the \inlinehs{IO} monad
@@ -1374,7 +1374,7 @@ stepAsteroids dT = HM.map (stepAsteroid dT)
 \end{listing}
 
 \subsubsection{Testing and debugging}
-Another benefit discussed at the beginning in section \ref{sect:whyfpmatters}
+Another benefit discussed at the beginning in section~\ref{sect:whyfpmatters}
 is \textbf{ease of testing and debugging}. Testing a pure function is as simple or as complicated
 as the function's parameters and its output. Testing an impure function is
 theoretically nearly impossible to do \emph{exhaustively}, since without looking at
@@ -1437,7 +1437,7 @@ which can also be used to setup breakpoints and step through evaluation.
 More extensive debuggers like Hat exist as well and package and project managers like Cabal
 and Stack also speed up development. However, even some general tools such as a robust IDE
 are easier to find for other languages and in terms of game development specific tools,
-there is not many besides the several libraries like apecs listed in section \ref{sect:existing}.
+there is not many besides the several libraries like apecs listed in section~\ref{sect:existing}.
 This can be contrasted with the complete, general engines, that come included with 
 tools for the whole development pipeline such as Unity.
 
@@ -1528,6 +1528,7 @@ to execute in parallel and concurrently, which Haskell is very good at.
 
 
 \subsection{State abstraction}
+\label{sect:stateabstraction}
 One of the largest differences between the implementations is how they model game's state.
 Through this prism we can see once again how \textbf{hAsteroids} and \textbf{imp-asteroids}
 are very similar. As we have mentioned before, because of the abstraction,
@@ -1556,8 +1557,8 @@ But from a practical standpoint, there is only a little difference between a mon
 and an object's state. Just as an object gives a context to a method's side effects,
 a state monad gives context to the monadic computation's side effects.
 In the same way that an object stored in a single variable is changed, a monad state
-can change without any outer signs. Listing \ref{lst:state} shows how similar
-are the main game loops.
+can change without any outer signs. Listing \ref{lst:state} shows how similar in appearance
+are the main game loops of hAsteroids and imp-asteroids.
 
 \begin{listing}
 \begin{haskell}
@@ -1572,7 +1573,7 @@ pGame->advance();
 pGame->handleInput(*pUI);
 pGame->draw(*pUI);
 \end{cppblock}
-\caption{Inside of the main loop in hAsteroids and imp-asteroids.}
+\caption{Cores of the main loops in hAsteroids and imp-asteroids.}
 \label{lst:state}
 \end{listing}
 
@@ -1586,7 +1587,7 @@ With that in mind, it also makes some things much simpler to program.
 As we have already pointed out, \textbf{pure-asteroids} steers clear of monads when possible,
 modeling the state explicitly. This does indeed make things easier to reason about,
 but it was much more complicated to write.
-We discuss this need for balance later, in section \ref{sect:dilemmas} about the observed dilemmas.
+We discuss this need for balance later, in section~\ref{sect:dilemmas} about the observed dilemmas.
 
 
 
@@ -1661,25 +1662,28 @@ which can be explained by \mintinline{console}{wc} understanding strings like
 
 Here we discuss further the conflicts observed in the previous section
 and suggest possible better compromises or solutions.
-% Namely we ponder about the tension between flexibility and safeness
-% and between abstraction and expressiveness.
+Namely we identify the tension between flexibility and safeness,
+and between abstraction and explicitness.
 
 
 
-\subsection{Flexibility \vs safeness}
+\subsection{Freedom \vs safeness}
 We saw examples of two extremes --- pure-asteroids with high safeness but low flexibility
 and hAsteroids together with imp-asteroids with high flexibility but low safeness.
-It may seem as though the two are mutually exclusive, and admittedly a unbound flexibility
-or rather freedom cannot be achieved at the same time as complete safeness rooted in control
-and limits. However, it definitely is possible to design a system that includes
-constraints and control implemented in a relatively flexible way. We would argue that
-a complete freedom of side effects and computation is rarely even desirable.
+It may seem as though the two are mutually exclusive. However, we see another
+characteristic hiding behind the flexibility label: \emph{freedom of side effects}
+or unbound flexibility. That is what cannot be achieved
+simultaneously as complete safeness rooted in control and limits.
+Nevertheless, it definitely is possible to design a system that includes
+constraints and control implemented in a relatively \emph{flexible} way.
+
+We would argue that complete freedom is rarely even desirable.
 It may be tolerable for smaller programs, possibly beneficial for simple scripts,
-but for any application larger, programmers are taught \say{good practices} such as
+but for any more extensive application, programmers are taught \say{good practices} such as
 \say{do not use global variables} and \say{do not use goto.}
-With good practises, a safe design can be achieved in a language like C as well
-but modern languages are here to help us and save us time and money.
-For this reason it is of great use when a language supports strong control
+A safe design can be achieved with good practices in a language like C,
+but modern languages help us save time and money.
+For this reason, it is of great use when a language supports robust control
 of side effects.
 
 Being able to compromise on unlimited side effects then, we believe that a reasonably flexible
@@ -1778,31 +1782,91 @@ using the \inlinehs{MonadIO} class, which \inlinehs{ReaderT r IO} already has an
 
 
 
-\subsection{Abstraction \vs expressiveness}
+\subsection{Abstraction \vs explicitness}
 
-to abstract or not to abstract\\
-object state is a similar abstraction to monad state as we have already discussed\\
-answering \say{How to model the world state?}\\
-perhaps referencing the \ref{lst:usedream} listing
+In the previous subsection, we have already mentioned abstraction as the means
+of gaining flexibility --- excessive abstraction results in too much flexibility,
+as seen in hAsteroids. Conversely, too much explicitness leads to a lack of flexibility,
+as seen in pure-asteroids.
+
+However, despite explicitness being one of the key features that make functional
+programming safer and easier to argue about, \emph{expressiveness} is the feature
+more worthy of pursuing. We can see explicit data flow as the way of reaching
+formal safeness, but it is expressiveness that helps us humans \emph{see it}.
+Furthermore, explicitness does not imply expressiveness. The flow of data can be
+described very precisely, but it may be so complicated that it does not make the code any clearer.
+That is when abstraction steps in place, and when used wisely, it leads to a
+more understandable code with fewer distractions. All of that, while in the background
+still being technically pure and formally safe.
+
+Figure \ref{fig:4sides} illustrates the relationships between our four identified
+foreground attributes and the two main background attributes we should be seeking.
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/4sides-of-code.png}
+    \caption{The four discussed qualities of design.}
+    \label{fig:4sides}
+\end{figure}
+
+As with many things in life, we need to find a balance
+between abstraction and explicitness so that our programs are still
+easily provable to be correct while not being painful to write and modify.
+
+When comparing the modeling of state in our three games in subsection~\ref{sect:stateabstraction},
+we have already pointed at how monads can emulate certain features of imperative languages,
+and at the same time, stay technically pure.\footnotemark{} We see the example in listing
+\ref{lst:usedream} as a good balance between abstraction and explicitness.
+We lean towards modeling the game world state as an explicit variable since it is
+the most important data structure. Mistakes in manipulation with it may be critical,
+and as the likely most extensive data structure,
+it could be highly beneficial to process it in parallel.
+
+\footnotetext{Philip Wadler speaks more on
+\say{combining the indulgences of impurity with the blessings of purity} %\cite{wadlermonads}
+by using monads in his paper \textit{Comprehending Monads}.\cite{wadlermonads}}
+% https://ncatlab.org/nlab/files/WadlerMonads.pdf
+
+On the other hand, things like the state of a random number generator or other resources
+meant only for reading, such as textures,\footnote{
+In a larger game, textures may need to load dynamically; still, they are read-mostly data.
+}
+can be hidden in an appropriately named monad without an issue.
+That way, we keep expressiveness but allow for flexibility.
+As an additional supporting example, we consider the following two function types:
+\begin{haskell}
+step :: (RandomReader r m) => World -> m World
+
+step' :: (RandomReader s m, WorldState s m) => m ()
+\end{haskell}
+One function takes a value of type \inlinehs{World} and returns
+a new value of the same type under the influence of a reader monad.
+While the other is obscurer and returns nothing but monadic effects.
+At last, we admit that this is to an extent a matter of personal taste
+and that some may prefer the effectful approach, despite what we have argued.\footnote{
+An example of such an approach can be seen in the Dino Rush game,
+described in the blog post \emph{A Game in Haskell - Dino Rush}\cite{dinorush} mentioned
+previously in section~\ref{sect:existing}.
+}
+
 
 
 % RECAP and final EVALUATION
 \section{Recapitulation / Final lesson -- draft/notes}
 
-it is said that Garbage Collection (GC) can be a problem in Haskell
-with interactive real-time applications like video games, but it has been proven that
-it is ok for small to medium sized games
---- paradox: pure functional design is great for long term and large scale,
-with Haskell the upfront cost is higher but the system produced is more likely to be of high quality
-
-classes can (and should) be used for polymorphism, increasing flexibility scalability and
-reducing code duplicity
-
 it remains to be true even for game development that the code can be more expressive,
 safer and briefer --- there is a balance between abstraction and explicitness
 
+we have discussed the relationships of design qualities \ref{fig:4sides}
+
+
 the language it self being very high-level and abstract can make it much more
 difficult to optimize, which is important for games --- languages like \cpp{} have the advantage
+
+it is said that Garbage Collection (GC) can be a problem in Haskell
+with interactive real-time applications, like video games, but it has been proven that
+it is ok for small to medium sized games
+--- paradox: pure functional design is great for long term and large scale,
+with Haskell the upfront cost is higher but the system produced is more likely to be of high quality
 
 We have rediscovered that Haskell can be very imperative, as explained by Simon P.~Jones and
 Philip Wadler in their paper \textit{Imperative Functional Programming}.\cite{imperativefp}
@@ -1812,6 +1876,9 @@ In that paper, they described for the first time, how monads could be used for i
 in lazy languages, and confirmed what we see in hAsteroids ---  with the \inlinehs{IO} monad
 Haskell can very closely resemble C. Yet, it keeps the benefits of functional style intact by
 clearly separating the imperative from the functional.
+
+classes can (and should) be used for polymorphism, increasing flexibility scalability and
+reducing code duplicity
 
 perhaps also quote Carmack again, when he said how over the years of supervising
 hundreds of programmers working of thousands and thousands of lines of code, he saw that
@@ -1880,7 +1947,7 @@ and it even flags bullets as dead if health reaches 0
 
 \section{Attributes}
 We evaluate our described implementations based on several desirable attributes for video games,
-some of which were promised in section \ref{sect:whyfpmatters} as benefits of Haskell.
+some of which were promised in section~\ref{sect:whyfpmatters} as benefits of Haskell.
 
 aspects of Modularity:
 \subsection*{Flexibility and scalability}
@@ -2052,6 +2119,11 @@ Haskell is great.
 % ====================================
 \appendix %% Start the appendices.
 \newcommand{\requirementitem}[1]{\subsubsection{\textbf{#1}}}
+
+\chapter{More examples of functional elegance}
+maybe?\\
+compile a bunch of things that are just "nice"
+
 
 \chapter{Electronic attachments}
 attachments structure and description
