@@ -696,7 +696,7 @@ This is divided into a series of twelve function calls:
     towards the ship's current location.
 
     \item \inlinehs{awardLifeIf10000}\\
-    increments ship's lives by 1 for reaching every 10000 score points.
+    increments ship's lives by 1 for reaching every 10\thinspace{}000 score points.
 
     \item \inlinehs{modify global $ \(WaveTime t) -> WaveTime $ t + dT}\\
     simply adds the frame delta time \inlinehs{dT} to the wave time counter.
@@ -1057,8 +1057,8 @@ The working of the individual \say{substeppers} can be summarized as follows:
     first filters out bullets that run out of time to live (TTL), and then it uses \inlinehs{traverse}
     to call \inlinehs{stepBullet} on all the bullets, collecting all events as an
     \inlinehs{Applicative} side effect.\footnote{
-    We use this predifined instance: \inlinehs{instance Monoid a => Applicative ((,) a)},
-    where a is our \inlinehs{WorldEvents} package.}
+    We use the predifined \inlinehs{instance Monoid a => Applicative ((,) a)},
+    where \inlinehs{a} is our \inlinehs{WorldEvents} package.}
     \inlinehs{stepBullet} then updates position, decrements TTL or marks the bullet for
     deletion by setting TTL to 0 if a collision was detected. Bullets check for collisions
     with everybody else and send them events, together with a reward event for \inlinehs{Score}
@@ -1076,7 +1076,7 @@ The working of the individual \say{substeppers} can be summarized as follows:
     one of the same two algorithms as in hAsteroids.
 
     \item \inlinehs{stepScore}\\
-    sends and event to the ship, awarding it with an extra life for every 10,000 points gained.
+    sends and event to the ship, awarding it with an extra life for every 10\thinspace{}000 points gained.
 \end{itemize}
 After that, \inlinehs{checkWave} takes care of spawning new waves of asteroids
 and then the stepped world is paired with the collected, generated events and returned.
@@ -1215,39 +1215,147 @@ product working well.
 \chapter{Analyzing an existing \cpp{} implementation}
 \label{chptr:impasteroids}
 
-\section{}
-Explain a bit about the choice of the particular implementation and
-comment on the quality of code
+This chapter, describes the imperative implementation that we later
+use to compare against in Chapter~\ref{chptr:evaluation}.
+We shall refer to it as \say{imp-asteroids}.
+It was made by Jason Halverson, and its GitHub repository can be found at
+\url{https://github.com/Halverson-Jason/Asteroids}. We created a fork of
+this repository with a branch named \inlinecpp{organized}\cite{impasteroidsrepo}
+with the original game with reorganized and reformatted files for convenience.
 
-the options turned out to be not so great, like my implementations
-this version is not flaw-less. we point out its mistakes and present
-them as a possible outcome of this language choice, although the choice
-definitely does not need to imply them nor conditions them
--> there can be a great program in \cpp{} and a really bad one in Haskell.
+We acknowledge that \cpp{} may not be the most relevant comparison
+as there are other choices for making a simple game quickly.
+However, we chose this example because it does not use any third-party engines.
+That way, we can easily compare it to our implementations
+without an extra layer of complexity.
 
-\section{}
-outline its working and architecture
+Furthermore, the options available all turned out to be of generally lower quality.
+Like our two implementations, this version is not flawless,\footnote{
+The game was made as a school assignment, and from the commented \inlinecpp{TODO}s
+throughout the code, we can judge that there were certain time limitations.}
+but we point out its mistakes and present them as a possible outcome of this language choice.
+Though, the choice does not imply nor condition such an outcome.
 
-\section{}
-reflect on it
-
-in a way very intuitive - objects, \say{imperatives}
-
-good scalability in terms of adding new entities or features,
-however there should be separate manager classes for entities
-
-some whoopsies - valgrind shows memory leaks and uses of uninitialized values
-
-effects can be everywhere -> high flexibility low safeness
-
-...maybe this chapter could be a section in \textbf{Comparing the approaches}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5 \textwidth]{images/imperative-asteroids.jpg}
+    \caption{A screenshot of imp-asteroids.}
+    \label{fig:impscreenshot}
+\end{figure}
 
 
-% John Carmack said in his keynote at Quakecon 2013\cite{carmackkeynote}
-% that he chose Haskell to explore functional programming because of its \say{brutal} functional purity.
-% He talked about how being a technical director over millions of lines of code,
-% he saw how \say{everything that is syntactically legal that the compiler will accept,
-% will eventually wind up in your codebase.}
+
+\section{Differences in features}
+
+This version differs from our two implementations in many ways,
+other than the language and style used. We want to list the most significant ones here:
+\begin{itemize}[--]
+    \item It uses GLUT with a custom wrapper instead of SDL to draw vector graphics.
+    \item Asteroids have more jagged shapes, rotate as they fly around,
+    and the ship has a thrust animation.
+    \item There are no menus, lives or score and the ship does not respawn.
+    \item Waves do not increase in the number of asteroids.
+    \item It does not have UFOs.
+    \item Physics are closer to the original.
+    \item It does not support variable refresh rate.
+    Every frame updates the world by a single implicit unit of time.
+\end{itemize}
+
+
+\section{How it works}
+The \inlinecpp{main} function is very simple. It constructs a new \inlinecpp{Game} object,
+and a new \inlinecpp{Interface} object. Then it calls \inlinecpp{run} on the \inlinecpp{Interface}
+passing it a pointer the the game object and a call back function.
+The callback function shown in Listing~\ref{lst:impcallback} is then registered in GLUT
+as the \inlinecpp{drawCallback}. That way it gets called from within \inlinecpp{glutMainLoop}
+every frame.
+
+\begin{listing}
+\begin{cppblock}
+void callBack(const Interface *pUI, void *p)
+{
+    Game *pGame = (Game *)p;
+
+    pGame->advance();
+    pGame->handleInput(*pUI);
+    pGame->draw(*pUI);
+}
+\end{cppblock}
+\caption{The core of imp-asteroids main loop.}
+\label{lst:impcallback}
+\end{listing}
+
+The \inlinecpp{Game} object has a pointer to a \inlinecpp{Ship} object, an \inlinecpp{std::vector}
+of \inlinecpp{Bullet} pointers, and an \inlinecpp{std::list} of \inlinecpp{Asteroid} pointers.
+All the entity objects inherit from the class \inlinecpp{FlyingObject}, which provides position, rotation,
+velocity, position updating (\inlinecpp{FlyingObject::advance()}),
+a universal collision detection using radii,
+and a few more miscellaneous attributes and methods.
+
+\subsubsection{Stepping the world}
+\inlinecpp{Game::advance()} is used to \say{advance} the world by one unit of time.
+It calls these subfunctions to do so:
+\begin{itemize}[--]
+    \item \inlinecpp{Game::advanceBullets()}\\
+    iterates over all the bullet pointers and calls \inlinecpp{advance} on them.
+
+    \item \inlinecpp{Game::advanceAsteroids()}\\
+    iterates over all the asteroid pointers and calls \inlinecpp{advance} on them.
+    If the collection is empty, it inserts five new large asteroids.
+
+    \item \inlinecpp{Game::advanceShip()}\\
+    calls \inlinecpp{advance} on the ship.
+
+    \item \inlinecpp{Game::handleCollisions()}\\
+    iterates over every bullet and asteroid, and in the case of a collision it
+    marks the bullet and the asteroid as dead, and creates new asteroids
+    unless the destroyed one was already the smallest size.
+
+    \item \inlinecpp{Game::cleanUpZombies()}\\
+    checks if entities are dead and deletes them if so.
+    Delaying the deletion prevents inconsistencies caused by serial
+    updating of entities --- this way the order of iteration does not matter.
+\end{itemize}
+
+\subsubsection{Input handling}
+\inlinecpp{Game::handleInput} checks through the \inlinecpp{Interface} object
+weather the controls were pressed, and calls ship's appropriate methods or
+inserts a new bullet as necessary.
+
+\subsubsection{Rendering}
+Finally, \inlinecpp{Game::draw} iterates over all the entities and calls their
+\inlinecpp{draw} methods.
+Only unexpected thing is the call of \inlinecpp{Bullet::setHealth} for all the bullets.
+This method decrements the bullet's health every frame and marks it as dead
+if the value gets to zero, similarly to TTL in our implementations.
+
+
+
+\section{Reflection}
+The game benefits from OOP as most of the top-level function (method) calls
+are very intuitive. It also avoids duplicity of code by using inheritance for position updating
+and polymorphism for universal collision detection.
+It offers decent scalability in adding new entities or features;
+however, there should be separate manager classes for each entity group.
+We also used \inlinecpp{valgrind} for memory profiling, and it discovered
+several usages of uninitialized values and memory leaks.
+
+We also dislike GLUT's use of callbacks and global state, making things
+confusing and difficult to test. Although, we understand that
+the goal of this particular implementation was not to be overly ambitious
+about scalability since the game is straightforward.
+Moreover, side effects can be present anywhere, and mutation of the game's state
+also is not limited very strongly. This is naturally a challenge for all imperative languages.
+
+One could argue that this is not an issue and that programmers only need be
+more competent about their usage of these powers. To combat this, the already quoted
+John Carmack talked about how being a technical director over millions of lines of code,
+he saw how \say{everything that is syntactically legal that the compiler will accept,
+will eventually wind up in your codebase.}\cite{carmackkeynote} He also said that
+\say{it's just amazing how many mistakes, and how bad programmers can be.}\cite{carmackkeynote}
+Because programmers are, after all, only humans, systems like the functional paradigm,
+that limit their ability to be \say{bad} can be of great use, as we demonstrate
+further in the following chapter.
 
 
 
@@ -1540,7 +1648,7 @@ in the results in table \ref{tab:benchfps}.
     \toprule
     Asteroid count & \textbf{imp-asteroids} & \textbf{hAsteroids} & \textbf{pure-asteroids} \\
     \midrule
-    10000 & 41 & 2   & 1   \\
+    10\thinspace{}000 & 41 & 2   & 1   \\
     500   & 59 & 30  & 16    \\
     250   & 59 & 46  & 23    \\
     100   & 59 & 55  & 37 \\
