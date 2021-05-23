@@ -45,17 +45,39 @@
     advisor     = {doc. Mgr. Jan Obdržálek, PhD.},
     title       = {Game development in Haskell},
     % TeXtitle    = {Game development in Haskell},
-    keywords    = {Haskell, functional paradigm, game development, apecs},
-    % TeXkeywords = {keyword1, keyword2, \ldots},
+    keywords    = {Haskell, functional paradigm, game development,
+                   Entity-Component-System, apecs, parallelism, monadic abstraction},
+    TeXkeywords = {Haskell, functional paradigm, game development,
+                   Entity\textendash{}Component\textendash{}System,
+                   apecs, parallelism, monadic abstraction},
     abstract    = {%
-      This is the abstract of my thesis, which can
+        Purely functional programming offers many benefits,
+        like briefer, safer, and more understandable code.
+        This thesis aims to show that these benefits also
+        apply to developing smaller-scale video games in Haskell and,
+        more importantly, that the drawbacks do not outweigh them.
 
-      span multiple paragraphs.
+        We present two implementations of a simple game.
+        The first one uses Entity\textendash{}Component\textendash{}System
+        provided by the apecs library,
+        and the second focuses on pure-style, parallelism-capable design.
+        Furthermore, we compare the two together with
+        an already existing imperative implementation.
+        We show that Haskell's powerful type system,
+        including its typeclasses and monadic abstraction,
+        is of especially great value for a good design
+        of real-time interactive applications such as games.
+        At last, we discuss how our findings may scale up.
     },
     thanks      = {%
-      These are the acknowledgements for my thesis, which can
-
-      span multiple paragraphs.
+      I want to thank my advisor, doc. Mgr. Jan Obdržálek, PhD., for his invaluable feedback,
+      patience, and encouragement. I also want to thank my colleagues at KISK
+      for tolerating my lousy tempo as I was finishing this thesis.
+      Finally, special thanks go to my fiancée for putting up with
+      the lengthy explanations of my excitement over programming and
+      my friends and family for all their support
+      --- especially my parents for not letting me starve
+      to death while working on this thesis.
     },
     bib         = bibliography.bib,
     %% Uncomment the following line (by removing the %% at the
@@ -154,30 +176,28 @@ first using the apecs\footfullcite{apecsrepo} library
 and for a second time without it. After a further discussion
 about chosen technologies in the following chapter,
 said three implementations are described and analyzed
-in chapters 2, 3, and 4. Then they are more closely compared
+in chapters \ref{chptr:hasteroids}, \ref{chptr:purity}, and \ref{chptr:impasteroids}.
+Then they are more closely compared
 and the pros and cons of Haskell in game development are
-evaluated and demonstrated in chapter 5.
+evaluated and demonstrated in Chapter~\ref{chptr:evaluation}.
 
 We find that the apecs library makes developing games
-in Haskell much more approachable. On the other hand
-it goes against the functional philosophy, and using it
+in Haskell much more approachable, and provides good performance.
+On the other hand it leads the programmer against the functional philosophy, and using it
 will generally result in very imperative code wrapped in monads
 that lacks the expressiveness and apparent safeness of regular Haskell.
-Yet, from the second reimplementation, we learn that
-some use of monads is beneficial, and it makes the code cleaner
-and more elegant. In both cases, the development was
+Yet, from the second implementation, we learn that
+some use of monads is beneficial, and it makes the code cleaner, more elegant,
+and more flexible. It could also be modified to use parallelism for
+world updating and detecting collisions since the functions are all pure and compartmentalized.
+Furthermore, we discuss what a middle-ground solution may look like
+with the use of typeclasses and monads, and how our findings may scale to larger games.
+In both cases, the development was
 mostly a smooth experience without a single major hiccup,
 unlike what often happens when dealing with a \cpp{} compiler.
-% Furthermore, from our
-% small scale example, it appears that a more \say{pure} architecture allows
-% for parallel computation resulting in better performance than an Entity
-% Component System like apecs or the one inside of Unity.\footnote{
-% Disclaimer: this is only my incomplete guess of the results,
-% the thesis is not yet finished.
-% }
 
 
-% ! be more brief !
+
 
 % ====================================
 % CHAPTER 1 - Deeper introduction
@@ -482,7 +502,7 @@ To write a game using apecs we must define \textbf{components} and \textbf{syste
 Systems also create new \textbf{entities},
 as creating them means to write some components under a new ID.
 
-First, defining a \textbf{component} means to define an instance of the type-class
+First, defining a \textbf{component} means to define an instance of the typeclass
 \inlinehs{Component}, as we see in the Listing~\ref{lst:component}.
 The \inlinehs{Component} class
 requires us to state how we want to store the given component
@@ -498,7 +518,7 @@ and it belongs to the special \inlinehs{global} entity together
 with every other entity at the same time. Finally, we call \inlinehs{makeWorld},
 which uses Template Haskell to generate \inlinehs{World} product type
 along with \inlinehs{initWorld} function and instances of the \inlinehs{Has}
-type-class needed for altering contents of \inlinehs{World} through
+typeclass needed for altering contents of \inlinehs{World} through
 the other functions in apecs. The resulting \inlinehs{World}
 may look close to something as shown in Listing~\ref{lst:world}.
 
@@ -798,7 +818,7 @@ and everything is type-safe.
 
 However, this approach is far from perfect. Handling collisions on an
 individual basis would scale very poorly, so some universal interface would be better.
-This could be achieved by defining a type-class and its instances for the marker components.
+This could be achieved by defining a typeclass and its instances for the marker components.
 More polymorphism could also differentiate functions that require the
 \inlinehs{System} monad, the \inlinehs{WithResources} monad, or both.
 In the current state, there are many functions, such as \inlinehs{reactToInput},
@@ -1191,7 +1211,7 @@ in pure-asteroids is very simple but it could be improved by using more
 complicated algorithms.
 
 However, even though we could use parallelism, the scalability of our design is somewhat lacking.
-It would be appropriate to use more type-classes in general. A class interface for
+It would be appropriate to use more typeclasses in general. A class interface for
 collision detection, stepping, communication using events and for resources abstraction.
 Pure-asteroids is too explicit, which makes it relatively rigid
 --- adding a random number
@@ -1495,7 +1515,7 @@ in which Haskell expressions can be interactively evaluated and programs can be 
 Haskell is quite unique by being a compiled language that comes with an interpreter as well.
 An interpreter allows us to test short expressions quickly, either to try something new or to
 run bits of already existing code. \texttt{GHCi} can also print the types of expressions
-or information about type-classes. This reduces the need to reference actual documentation,
+or information about typeclasses. This reduces the need to reference actual documentation,
 although the documentation is also very helpful. \say{Hoogle is a Haskell API search engine,
 which allows you to search the Haskell libraries on Stackage by either function name,
 or by approximate type signature.}\cite{hoogle} This makes searching for functions easier
@@ -1857,9 +1877,9 @@ of side effects.
 
 Being able to compromise on unlimited side effects then, we believe that a reasonably flexible
 system can by designed in Haskell, which is also very safe.
-The addition of type-classes was a great break through for Haskell and it is exactly this
+The addition of typeclasses was a great break through for Haskell and it is exactly this
 feature that is used for good, modular, flexible and safe design of complex systems.
-Type-classes are used to put constraints on types and can be also compounded,
+typeclasses are used to put constraints on types and can be also compounded,
 that way the addition or removal of limits is relatively easy.
 This not only helps controlling the return type, but can also help
 with polymorphous arguments, making code more useful while staying safe.
@@ -1870,7 +1890,7 @@ we can see a much better modular design suggestion with a usage example in Listi
 The monad that allows functions to access any of its contents and perform I/O
 is restricted through polymorphism when subfunctions are called.
 Constraints can be added to a function's type to grant access to more of the state or
-or removed to limit it. Moreover, the \inlinehs{Resources} type and the type-classes
+or removed to limit it. Moreover, the \inlinehs{Resources} type and the typeclasses
 could be expanded to accommodate for more resources.
 
 % maybe put this into an appendix?
@@ -2019,7 +2039,7 @@ previously in Section~\ref{sect:existing}.
 
 
 
-% RECAP and final EVALUATION
+% RECAP and final EVALUATION => moved to Conclusion
 % \section{Summary}
 % -- draft/notes
 
@@ -2078,7 +2098,7 @@ of abstraction and explicitness. Moreover, we discussed the relationship of thos
 characteristics with freedom of effects and safeness, arriving at the conclusion
 that the focus should be on \emph{expressiveness} and \emph{flexibility}.
 We argued that the later two qualities are achieved by balancing the former two pairs,
-and showed how Haskell's type-classes can be used together with monads
+and showed how Haskell's typeclasses can be used together with monads
 to achieve the desired balance.
 
 We have rediscovered that Haskell can be very imperative, as explained by Simon P.~Jones
@@ -2116,9 +2136,8 @@ towards better game engines with all of the perks of purely functional programmi
 
 Here we can notice a certain paradox: the benefits of pure functional design
 become most significant in the long term and large scale.
-With Haskell the initial investment is higher
-but the system produced is more likely to be of high quality. However, our examples
-are small in scale and it remains to be proven in practise that they can scale up
+However, our examples are small in scale and it remains to be proven
+in practise that our findings could be applied to more complex games
 without running into issues with laziness for instance.
 
 Moreover, we would be curious to see weather adding the actual parallelism into pure-asteroids
@@ -2128,13 +2147,109 @@ how it would compare to the data-oriented design of apecs as the entity counts g
 
 
 
-% TEMP notes
-\chapter*{Temporary notes on comparing}
 
-\mintinline{console}{wc --help}: "A word is a non-zero-length sequence of characters delimited by white space"\\
+% ====================================
+%             Bibliography
+% ====================================
+\printbibliography[heading=bibintoc] %% Print the bibliography.
 
-% TODO put this in the appendix
-hAsteroids
+
+
+% \makeatletter\thesis@blocks@clear\makeatother
+% \phantomsection %% Print the index and insert it into the
+% \addcontentsline{toc}{chapter}{\indexname}
+% \printindex
+
+
+
+% ====================================
+%             APPENDIX
+% ====================================
+\appendix %% Start the appendices.
+
+\chapter{Example of modular monad design using typeclasses}
+\label{app:classes}
+
+Here we list a working toy-scale example, implementing the modular design
+we outlined at the end of Section~\ref{sect:dilemmas}.
+
+\begin{minted}[breaklines, linenos]{haskell}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+
+import Control.Monad.IO.Class
+import Control.Monad.Reader
+
+class MonadReader r m => TexturesReader r m where
+    askForTextures :: m Textures
+
+class MonadReader r m => RandomReader r m where
+    askForRandom :: m RandGen
+
+type WithResources a = ReaderT Resources IO a
+
+type Textures = String
+type RandGen = [Int]
+data Resources =
+    Res
+    { textures :: Textures
+    , random   :: RandGen
+    }
+
+instance Monad m => TexturesReader Resources (ReaderT Resources m) where
+    askForTextures = asks textures
+
+instance Monad m => RandomReader Resources (ReaderT Resources m) where
+    askForRandom = asks random
+
+newtype World = World Int deriving Show
+
+main :: IO ()
+main = do
+    let world = World 10
+    let resources = Res  
+            { textures = "Current world state: "
+            , random = [4, 2]
+            }
+    runReaderT (game world) resources  
+
+game :: World -> WithResources ()
+game w = do
+    newW <- step w
+    draw w
+    quit <- liftIO $ getLine
+    unless (quit == "q") $
+        game newW
+
+step :: (RandomReader r m) => World -> m World
+step (World state)= do
+    rand <- head <$> askForRandom
+    return $ World $ state + rand
+
+draw :: (MonadIO m, TexturesReader r m) => World -> m ()
+draw w = do
+    t <- askForTextures
+    liftIO $ putStrLn $ t ++ show w
+
+\end{minted}
+
+
+
+
+
+\chapter{More examples of functional elegance}
+maybe?\\
+compile a bunch of things that are just "nice"
+
+
+
+
+\chapter{Data about code length}
+
+\mintinline{console}{wc --help}: \say{A word is a non-zero-length sequence
+of characters delimited by white space}
+
+hAsteroids:
 \begin{term}
 ~/ba-thesis/hAsteroids$ wc -lwm src/*.hs app/Main.hs
   207   844  6609 src/Collisions.hs
@@ -2151,7 +2266,7 @@ hAsteroids
  1412  5461 42183 total
 \end{term}
 
-pure-asteroids
+pure-asteroids:
 \begin{term}
 ~/ba-thesis/pure-asteroids$ wc -lwm src/*.hs src/Step/*.hs app/Main.hs
   149   635  4327 src/Draw.hs
@@ -2173,7 +2288,7 @@ pure-asteroids
  1430  5554 41843 total
 \end{term}
 
-Asteroids by Jason Halverson
+Asteroids by Jason Halverson:
 \begin{term}
 ~/Asteroids$ wc -lwm *.cpp
   195   376  5416 asteroids.cpp
@@ -2205,37 +2320,6 @@ Asteroids by Jason Halverson
 \end{term}
 
 
-\subsection*{Program performance}
-with low-level languages it is easier to optimize, they do not hide
-what the computer is actually doing. Haskell is \emph{very} abstract,
-its formality allows the compiler to do a lot of optimizations, but
-it requires deeper knowledge of \inlinehs{ghc} for the programmer
-to know how the code will perform. Laziness is an example
-of a language feature that can cause problems with performance...
-
-
-
-
-\printbibliography[heading=bibintoc] %% Print the bibliography.
-
-
-\makeatletter\thesis@blocks@clear\makeatother
-\phantomsection %% Print the index and insert it into the
-\addcontentsline{toc}{chapter}{\indexname}
-\printindex
-
-
-
-% ====================================
-%             APPENDIX
-% ====================================
-\appendix %% Start the appendices.
-\newcommand{\requirementitem}[1]{\subsubsection{\textbf{#1}}}
-
-\chapter{More examples of functional elegance}
-maybe?\\
-compile a bunch of things that are just "nice"
-
 
 \chapter{Electronic attachments}
 attachments structure and description
@@ -2244,29 +2328,44 @@ attachments structure and description
 \chapter{Build instructions}
 The build process for both hAsteroids and pure-asteroids is very similar.
 The following requirements must be met first.
+\newcommand{\requirementitem}[1]{\noindent\textbf{#1}}
 
+\medskip
 \requirementitem{Haskell Tool Stack}
 \begin{itemize}[\indent]
-    \item Both games are projects managed using the Haskell Tool Stack,\footnote{
+    \item Both games are projects managed using the Haskell Tool Stack;\footnote{
     About \mintinline{console}{stack}: \url{https://docs.haskellstack.org/en/stable/README/}
-    } therfore \mintinline{console}{stack} needs to be installed
+    } therefore, \mintinline{console}{stack} needs to be installed.
+    We recommend running \mintinline{console}{stack upgrade} before attempting the build.
 \end{itemize}
 
 \requirementitem{SDL libraries}
 \begin{itemize}[\indent]
-    \item sdl must be installed
-    \item instructions for windows and ubuntu
+    \item The used Haskell SDL bindings require the C libraries to be installed.
+    Specifically, both projects need SDL and SDL\_ttf, and hAsteroids also uses SDL\_image 
+    \item To install all three on Ubuntu, you can use this command:
+    \begin{term}
+    sudo apt install libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev
+    \end{term}
+    
+    \item To install all three on Windows with the help of \mintinline{console}{stack}:
+    \begin{term}
+    stack exec -- pacman -S mingw64/mingw-w64-x86_64-pkg-config mingw64/mingw-w64-x86_64-SDL2 mingw64/mingw-w64-x86_64-SDL2_ttf mingw64/mingw-w64-x86_64-SDL2_image
+    \end{term}
 \end{itemize}
 
 \requirementitem{Operating System}
 \begin{itemize}[\indent]
-    \item Tested on Ubuntu 20.04 and Windows 10 build 19042
+    \item Stack and SDL support Linux, Windows, and Mac~OS.
+    However, the build was tested only on Ubuntu~20.04 and Windows~10 build~19042.
 \end{itemize}
 
-With that, we can run \mintinline{console}{stack build} in the game's directory
-... things happen ...
-To launch the game run \mintinline{console}{stack run} or
-\mintinline{console}{stack exec <name-of-the-executable>}.
+\noindent With that, we can run \mintinline{console}{stack build} in the game's root directory.
+This may take a while as \mintinline{console}{stack} downloads and installs all the dependencies.
+To launch the game when project is built successfully,
+execute \mintinline{console}{stack run} or \mintinline{console}{stack exec <name-of-the-executable>}.
+We were unable to make \mintinline{console}{stack exec} work on Windows, so alternatively,
+we can run \mintinline{console}{stack ghci} and then run the \inlinehs{main} function in GHCi.
 
 
 
