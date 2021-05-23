@@ -38,7 +38,7 @@
 @ONLINE{helmrepo,
     author = {Zack Corr},
     title = {Helm},
-    subtitle = {A functionally reactive game engine.},
+    subtitle = {A functionally reactive game engine},
     medium = {online},
     accessed = {2021-05-01},
     urldate = {2021-05-01},
@@ -71,7 +71,7 @@
 @ONLINE{alpacarepo,
     author = {David Eichmann},
     title = {alpaca-netcode},
-    subtitle = {Rollback/replay NetCode for realtime, deterministic, multiplayer games.},
+    subtitle = {Rollback/replay NetCode for realtime, deterministic, multiplayer games},
     medium = {online},
     accessed = {2021-05-01},
     urldate = {2021-05-01},
@@ -82,11 +82,35 @@
 @ONLINE{fungenrepo,
     author = {Andre Furtado},
     title = {FunGEn},
-    subtitle = {A lightweight, cross-platform, OpenGL-based game engine.},
+    subtitle = {A lightweight, cross-platform, OpenGL-based game engine},
     medium = {online},
     accessed = {2021-05-01},
     urldate = {2021-05-01},
     URL = {http://hackage.haskell.org/package/FunGEn},
+}
+
+% Gloss repository on Hackage
+@ONLINE{glossrepo,
+    title = {gloss},
+    subtitle= {Painless 2D vector graphics, animations and simulations},
+    author = {Ben Lippmeier},
+    medium = {online},
+    accessed = {2021-05-01},
+    urldate = {2021-05-01},
+    URL = {},
+    langid = {english},
+}
+
+% SDL bindings repository on Hackage
+@ONLINE{sdlrepo,
+    title = {sdl2},
+    subtitle = {Both high- and low-level bindings to the SDL library (version 2.0.6+)},
+    author = {Gabríel Arthúr Pétursson and Oliver Charles},
+    medium = {online},
+    accessed = {2021-05-16},
+    urldate = {2021-05-16},
+    URL = {https://hackage.haskell.org/package/sdl2},
+    langid = {english},
 }
 
 % The imp-asteroids repository on GitHub
@@ -105,7 +129,7 @@
 
 % Keerastudios website
 @ONLINE{keerastudios,
-    author = {Keera Studios},
+    author = "{Keera Studios}",
     % publisher = {Keera Studios},
     location  = {Nottingham},
     title = {Products and Services},
@@ -118,7 +142,7 @@
 
 % Keerastudios website
 @ONLINE{aboutasteroids,
-    author = {The Dot Eaters},
+    author = "{The Dot Eaters}",
     % publisher = {The Dot Eaters},
     title = {Asteroids - Rockin' the Arcades},
     date = {2013},
@@ -152,6 +176,18 @@
     accessed = {2021-05-05},
     urldate = {2021-05-05},
     URL = {https://medium.com/ingeniouslysimple/entities-components-and-systems-89c31464240d},
+    langid = {english},
+}
+
+% GHCi wiki
+@ONLINE{ghciwiki,
+    author = "HaskellWiki",
+    title = "GHC/GHCi --- HaskellWiki{,} ",
+    year = "2020",
+    medium = {online},
+    accessed = {2021-05-19},
+    urldate = {2021-05-19},
+    URL = {https://wiki.haskell.org/index.php?title=GHC/GHCi&oldid=63309},
     langid = {english},
 }
 
@@ -208,7 +244,7 @@
     author = {Sandy Maguire},
     title = {Why Take Ecstasy},
     medium = {online},
-    date = {2018-28-1},
+    date = {2018-01-28},
     accessed = {2021-05-01},
     urldate = {2021-05-01},
     URL = {https://reasonablypolymorphic.com/blog/why-take-ecstasy/},
@@ -220,28 +256,57 @@
 % --- scholarly articles
 
 % Why Functional Programming Matters
-@ARTICLE{whyfpmatters,
+@ONLINE{whyfpmatters,
     author = {John Hughes},
     title = {Why Functional Programming Matters},
-    journal = {The Computer Journal},
-    volume = {32},
-    number = {2},
-    pages = {98-107},
+    % journal = {The Computer Journal},
+    % volume = {32},
+    % number = {2},
+    % pages = {98-107},
     year = {1989},
     month = {01},
-    abstract = "{As software becomes more and more complex, it is more and more important to structure it well. Well-structured software is easy to write, easy to debug, and provides a collection of modules that can be re-used to reduce future programming costs. Conventional languages place conceptual limits on the way problems can be modularised. Functional languages push those limits back. In this paper we show that two features of functional languages in particular, higher-order functions and lazy evaluation, can contribute greatly to modularity. As examples, we manipulate lists and trees, program several numerical algorithms, and implement the alpha-beta heuristics (an Artificial Intelligence algorithm used in game-playing programs). Since modularity is the key to successful programming, functional languages are vitally important to the real world.}",
-    issn = {0010-4620},
+    % issn = {0010-4620},
     doi = {10.1093/comjnl/32.2.98},
     url = {https://doi.org/10.1093/comjnl/32.2.98},
     eprint = {https://academic.oup.com/comjnl/article-pdf/32/2/98/1445644/320098.pdf},
+    urldate = {2021-04-25}
+}
+
+% Monads for functional programming
+@ONLINE{wadlermonads,
+    title={Monads for functional programming},
+    author={Wadler, Philip},
+    % booktitle={International School on Advanced Functional Programming},
+    % pages={24--52},
+    year={1995},
+    url = {http://staff.um.edu.mt/afra1/seminar/monads.pdf},
+    urldate = {2021-05-15}
+}
+
+% Imperative Functional Programming
+@ONLINE{imperativefp,
+    author = {Peyton Jones, Simon L. and Wadler, Philip},
+    title = {Imperative Functional Programming},
+    year = {1993},
+    % isbn = {0897915607},
+    % publisher = {Association for Computing Machinery},
+    % address = {New York, NY, USA},
+    % doi = {10.1145/158511.158524},
+    % pages = {71–84},
+    % numpages = {14},
+    % location = {Charleston, South Carolina, USA},
+    % series = {POPL '93},
+    % url = {https://doi.org/10.1145/158511.158524},
+    ulr = {https://www.microsoft.com/en-us/research/wp-content/uploads/1993/01/imperative.pdf},
+    urldate = {2021-05-15}
 }
 
 % scholarly-ish - the Apecs paper
-@ARTICLE{apecspaper,
+@ONLINE{apecspaper,
     author = {Jonas Carpay},
     title = {Apecs},
     subtitle = {A Type-Driven Entity-Component-System Framework},
-    journal = {GitHub},
+    publisher = {GitHub},
     medium = {online},
     url = {https://github.com/jonascarpay/apecs/blob/master/apecs/prepub.pdf},
     date = {2018-11-18},
@@ -260,6 +325,27 @@
     urldate = {2021-05-06},
     publisher = {YouTube},
     url = {https://youtu.be/1PhArSujR_A?t=125}
+}
+
+
+% used media
+
+% https://en.wikipedia.org/wiki/File:Asteroids-arcadegame.jpg
+@ONLINE{asteroidsflyer,
+    author = "{Wikipedia contributors}",
+    title = "File:Asteroids-arcadegame.jpg --- {Wikipedia}{,} The Free Encyclopedia",
+    year = "2018",
+    url = {https://en.wikipedia.org/w/index.php?title=File:Asteroids-arcadegame.jpg&oldid=820309311},
+    urldate = {2021-05-12}
+}
+
+% https://en.wikipedia.org/wiki/File:Asteroi1.png
+@ONLINE{asteroidsscreenshot,
+    author = "{Wikipedia contributors}",
+    title = "File:Asteroi1.png --- {Wikipedia}{,} The Free Encyclopedia",
+    year = "2017",
+    url = {https://en.wikipedia.org/w/index.php?title=File:Asteroi1.png&oldid=781748912},
+    urldate = {2021-05-12}
 }
 
 

@@ -424,8 +424,6 @@ on the code implementing the game rules and behaviors.
     \end{minipage}
     \caption{Atari Asteroids --- Promotional flyer cover\cite{asteroidsflyer}
     and gameplay screenshot.\cite{asteroidsscreenshot}}
-    % https://en.wikipedia.org/wiki/File:Asteroids-arcadegame.jpg
-    % https://en.wikipedia.org/wiki/File:Asteroi1.png
 \end{figure}
 
 The game can be described as followed:
@@ -457,7 +455,7 @@ and data is attached to it by being stored under that ID. This data is
 organized into \textbf{components}, which are then stored in separate
 lists with other components of the same type from other entities.\cite{mediumecs} This can
 be represented as a table where every column is its own list or array
-(see table \ref{tab:ecsexamp}). Then we define game logic as \textbf{systems}
+(see Table~\ref{tab:ecsexamp}). Then we define game logic as \textbf{systems}
 --- a set of functions that operate on certain components regardless of the
 entity as a whole. A typical example of a system is adding an entity's velocity
 to its position for every entity with both of those components.
@@ -589,7 +587,7 @@ Furthermore, with \inlinehs{cmaM_} there is no direct writing, only side effects
 
 \begin{figure}[hbt!]
     \centering
-    \includegraphics[width=\textwidth]{images/hasteroids-screenshot.jpg}
+    \includegraphics[width=0.8 \textwidth]{images/hasteroids-screenshot.jpg}
     \caption{A screenshot of hAsteroids gameplay.}
     \label{fig:hasteroidsscreenshot}
 \end{figure}
@@ -1339,7 +1337,7 @@ It calls these subfunctions to do so:
 
 \subsubsection{Input handling}
 \inlinecpp{Game::handleInput} checks through the \inlinecpp{Interface} object
-weather the controls were pressed, and calls ship's appropriate methods or
+whether the controls were pressed, and calls ship's appropriate methods or
 inserts a new bullet as necessary.
 
 \subsubsection{Rendering}
@@ -1391,10 +1389,8 @@ often referencing back to the promised benefits of Haskell from Section~\ref{sec
 Then we discuss the conflicts observed in the comparisons and their possible solutions
 and finally summarize our findings.
 
-% note: replace "safeness" with "security"?
 
 \section{Comparison}
-% TODO: show a part of code where hAsteroids looks close to the c++
 
 In this section we compare the three example implementations or more broadly Haskell and
 imperative languages represented by \cpp{}.
@@ -1511,15 +1507,12 @@ Both \textbf{pure-asteroids} and \textbf{hAsteroids} more or less benefit from t
 \subsubsection{Interpreter}
 One of such features is \textbf{GHCi}, \say{GHC's interactive environment,
 in which Haskell expressions can be interactively evaluated and programs can be interpreted.}\cite{ghciwiki}
-% https://wiki.haskell.org/GHC/GHCi
-Haskell is quite unique by being a compiled language that comes with an interpreter as well.
+Haskell is a compiled language that comes with an interpreter as well.
 An interpreter allows us to test short expressions quickly, either to try something new or to
 run bits of already existing code. \texttt{GHCi} can also print the types of expressions
-or information about typeclasses. This reduces the need to reference actual documentation,
-although the documentation is also very helpful. \say{Hoogle is a Haskell API search engine,
-which allows you to search the Haskell libraries on Stackage by either function name,
-or by approximate type signature.}\cite{hoogle} This makes searching for functions easier
-and can prevent \say{wheel reinvention}.
+or information about typeclasses. We have used the interpreter frequently during development
+for reminding ourselves of type signatures, testing vector manipulation, and more.
+
 
 \subsubsection{Functional elegance}
 Furthermore, there is many predefined high-order functions like
@@ -1539,8 +1532,9 @@ which could be used to make this piece of code more concise. However, this chara
 to the whole Haskell code base --- in both of our games there is only three instances
 of explicit recursion in total: the game loops and \inlinehs{drawLines} in pure-asteroids.
 This is rather impressive considering the games have to manipulate collections of events,
-textures, entities, components and more.
-More on conciseness in Subsection~\ref{sect:codestats} (Code statistics).
+textures, entities, components and others. More examples of elegant code are appended at the end
+of this thesis in Apendix \ref{app:elegance}.
+We also address conciseness further, in Subsection~\ref{sect:codestats} (Code statistics).
 \begin{listing}[H]
 \begin{minted}[fontsize=\small, breaklines]{cpp}
 // C++
@@ -1557,17 +1551,17 @@ void Game::advanceAsteroids() {
 stepAsteroids :: Time -> Asteroids -> Asteroids
 stepAsteroids dT = HM.map (stepAsteroid dT)
 \end{minted}
-
 \caption{Asteroid stepping with for-loop and map.}
 \label{lst:elegance}
 \end{listing}
+
 
 \subsubsection{Testing and debugging}
 Another benefit discussed at the beginning in Section~\ref{sect:whyfpmatters}
 is \textbf{ease of testing and debugging}. Testing a pure function is as simple or as complicated
 as the function's parameters and its output. Testing an impure function is
 theoretically nearly impossible to do \emph{exhaustively}, since without looking at
-its definition we do not know weather it reads from a file or not for instance.
+its definition we do not know whether it reads from a file or not for instance.
 Practically, we do not need to be completely exhaustive and can make assumptions,
 however, those unchecked assumptions are the weak spots that may cause problems.
 
@@ -1611,8 +1605,8 @@ pair that can be checked for correctness by other functions. On the contrary, to
 \inlinecpp{advanceBullets} we need to set up a \inlinecpp{Game} object with its contents,
 many of which are \inlinecpp{private}. That requires refactoring and
 the same applies to testing the state after \inlinecpp{advanceBullets} has been called.
-Additionally, we may want to test not only weather the collection of bullets has
-changed correctly but also weather the rest of the state is correct.
+Additionally, we may want to test not only whether the collection of bullets has
+changed correctly but also whether the rest of the state is correct.
 
 \textbf{hAsteroids} is no better as the test needs to run inside of the \inlinehs{SystemT w m a} monad,
 where we set up components using \inlinehs{newEntity} function and then after running
@@ -1623,14 +1617,14 @@ Lastly, an obvious disadvantage is the fact that writing a game in Haskell
 is still largely a pioneering process. There is a decent amount of existing general tools,
 one of them being the already described interpreter,
 which can also be used to setup breakpoints and step through evaluation.
-More extensive debuggers like Hat exist as well and package and project managers like Cabal
-and Stack also speed up development. However, even some general tools such as a robust IDE
+More extensive debuggers like Hat exist as well. We used Stack for easy management of
+the package and its dependencies. However, even some general tools such as a robust IDE
 are easier to find for other languages and in terms of game development specific tools,
 there is not many besides the several libraries like apecs listed in Section~\ref{sect:existing}.
 This can be contrasted with the complete, general engines, that come included with 
 tools for the whole development pipeline such as Unity.
 
-This was expected and it turned out not to be a problem as our example game was
+This was expected and it turned out not to be an issue as our example game was
 very simple. Yet, we can imagine that with a larger game we would start
 to feel the need for more tools.
 
@@ -1658,15 +1652,16 @@ The games were altered to spawn various, abnormal quantities of asteroids and
 run for ten seconds with the ship constantly spinning and shooting one bullet per frame.
 Note that the results are rather illustrational as the differences between games were not controlled
 very well: imp-asteroids uses GLUT with the FPS limited to maximum of 59, because of issues
-with Stack on Windows the Haskell games were run in the interpreter, hAsteroids renders
+with \inlinecpp{stack exec} seemingly not running the programs at all on Windows,
+the Haskell games were run in the interpreter, hAsteroids renders
 textures instead of drawing vectors like the other two and there are other minor differences.
-The benchmark was run at least 3 times for every asteroid count and the median is shown
-in the results in table \ref{tab:benchfps}.
+The benchmark was run at least three times for every asteroid count and the median is shown
+in the results in Table~\ref{tab:benchfps}.
 
 \begin{table}
   \begin{tabularx}{\textwidth}{|r|llX|}
     \toprule
-    Asteroid count & \textbf{imp-asteroids} & \textbf{hAsteroids} & \textbf{pure-asteroids} \\
+    Asteroid count & \textbf{imp-asteroids} & \textbf{hAsteroids}\footnotemark & \textbf{pure-asteroids}\footnotemark[\value{footnote}] \\
     \midrule
     10\thinspace{}000 & 41 & 2   & 1   \\
     500   & 59 & 30  & 16    \\
@@ -1681,9 +1676,11 @@ in the results in table \ref{tab:benchfps}.
   \caption{Average FPS in the benchmarks.}
   \label{tab:benchfps}
 \end{table}
+\footnotetext{hAsteroids and pure-asteroids were run in the interpreter
+due to a problem with \inlinecpp{stack exec} on Windows.}
 
 We ran the benchmark for 100 asteroids also in a virtual machine with Ubuntu,
-where \inlinehs{stack build} worked normally, and the results were quite different
+where \inlinehs{stack exec} worked normally, and the results were quite different
 even if we account for the slower \say{virtual hardware}:
 46, 21 and 34 FPS respectively for imp-asteroids, hAsteroids and pure-asteroids.
 From these results with all three games being compiled we can assume,
@@ -1691,14 +1688,16 @@ what is said to be true for Haskell in other fields,
 that its performance is mostly comparable to \cpp{}.
 Unfortunately, we did not have time to diagnose why apecs performed so poorly in this case.
 However, when comparing the two versions (hAsteroids and pure-asteroids) running in GHCi,
-hAsteroids with apecs does outperform pure-asteroids for higher entity counts as we expected.
+hAsteroids with apecs does outperform pure-asteroids by up to 100~\% for high entity counts.
+This was expected as apecs provides a data-oriented design that optimizes data locality in memory.
 
 Worthy of noting is also the profiling we did on the runs in Ubuntu.
 Most importantly it showed that neither of the games had issues with Garbage Collection (GC)
 as this can become a problem with larger lazy systems.
-The productivity reported by the \mintinline{console}{-s} profiling flag was 99.1 \%
-for hAsteroids and 97.6 \% for pure-asteroids,
+The productivity reported by the \mintinline{console}{-s} profiling flag was 99.1~\%
+for hAsteroids and 97.6~\% for pure-asteroids,
 meaning GC is not causing any meaningful delays in our games.
+% TODO mention something about cost centers, maybe refer to the html profiles
 
 This brings us to the \textbf{tools} available and ease of \textbf{optimization} in general.
 As mentioned in the previous subsection, there are various tools including
@@ -1823,7 +1822,6 @@ We can also notice the slight, opposite tendencies of words per lines and charac
 It would appear that in the \cpp{} code, words are longer and there is less of them per line,
 which can be explained by \mintinline{console}{wc} understanding strings like
 \inlinecpp{asteroids.erase(it);} as one word as are understood also operators, more frequent in Haskell.
-
 
 % ----------------------------------------------------------
 % \subsection{pure-asteroids \vs hAsteroids}
@@ -2011,7 +2009,7 @@ and as the likely most extensive data structure,
 it could be highly beneficial to process it in parallel.
 
 \footnotetext{Philip Wadler speaks more on
-\say{combining the indulgences of impurity with the blessings of purity} %\cite{wadlermonads}
+\say{combining the indulgences of impurity with the blessings of purity}
 by using monads in his paper \textit{Comprehending Monads}.\cite{wadlermonads}}
 % https://ncatlab.org/nlab/files/WadlerMonads.pdf
 
@@ -2088,60 +2086,58 @@ In this thesis, we used two approaches to reimplement Asteroids by Atari in Hask
 resulting in two projects: hAsteroids and pure-asteroids.
 We have described each implementation in Chapters~\ref{chptr:hasteroids} and~\ref{chptr:purity}.
 Additionally, we picked an existing imperative reimplementation from GitHub and also
-outlined its working in Chapter~\ref{chptr:impasteroids}.
+outlined its operation in Chapter~\ref{chptr:impasteroids}.
 Then, in Chapter~\ref{chptr:evaluation}, we have compared the implementations
-to find out weather the general benefits of the functional programming paradigm
-apply to game development as well.
+to determine whether the functional programming paradigm's
+general benefits apply to game development.
 
 We have gathered that our two approaches are opposite extremes on the spectrum
 of abstraction and explicitness. Moreover, we discussed the relationship of those
-characteristics with freedom of effects and safeness, arriving at the conclusion
+characteristics with freedom of effects and safeness, concluding
 that the focus should be on \emph{expressiveness} and \emph{flexibility}.
-We argued that the later two qualities are achieved by balancing the former two pairs,
-and showed how Haskell's typeclasses can be used together with monads
+We argued that the latter two qualities are achieved by balancing the former two pairs
+and showed how Haskell's typeclasses could be used together with monads
 to achieve the desired balance.
 
 We have rediscovered that Haskell can be very imperative, as explained by Simon P.~Jones
-and Phlip Wadler in their paper \textit{Imperative Functional Programming}.\cite{imperativefp}
+and Philip Wadler in their paper \textit{Imperative Functional Programming}.\cite{imperativefp}
 % https://www.microsoft.com/en-us/research/wp-content/uploads/1993/01/imperative.pdf
 In that paper, they described for the first time how monads could be used for input/output
-operations in lazy languages, and confirmed what we see as the result in hAsteroids --- with the
+operations in lazy languages and confirmed what we see as the result in hAsteroids --- with the
 \inlinehs{IO} monad, Haskell can very closely resemble C. Yet, it keeps the
 benefits of functional style intact by clearly separating the imperative from the functional.
 
 Simultaneously, while the creators of Haskell argue for laziness, it can cause performance issues.
-This happens when large unevaluated data accumulates up and results in long delays caused
+This happens when extensive unevaluated data accumulates and results in long delays caused
 by the Garbage Collection (GC). This is especially of concern for video games where the time to
-compute and render a frame is limited. Moreover, finding the sources of those \say{lazy memory leaks,}
-and doing other optimizations can be harder to go about due to the language's strong abstraction.
-However, we did not experience any problems with GC in our small scale experiments.
+compute and render a frame is limited. Moreover, finding the sources of those \say{lazy memory leaks}
+and doing other optimizations can be more challenging due to the language's strong abstraction.
+However, we did not experience any problems with GC in our small-scale experiments.
 
 Furthermore, we have found that the apecs library makes game programming in Haskell surprisingly
 accessible. hAsteroids outperformed pure-asteroids by up to 100~\% for high entity counts
 because of the Entity\textendash{}Component\textendash{}System design (a data-oriented design)
 provided by apecs.
-Creating pure-asteroids was more demanding but its design is clearer and it keeps
-parallelism in mind. Even though it does not actually implement it, we payed attention
+Creating pure-asteroids was more demanding, but its design is clearer, and it keeps
+parallelism in mind. Even though it does not actually implement it, we paid attention
 to making the architecture easy to modify for parallel computation.
 
 Ultimately, we believe that the game's code can be more modular, in parts briefer,
 easier to understand and to argue about its correctness than its imperative equivalent.
 It does come at a higher upfront cost, especially considering the limited libraries and tools
-(at least in comparison to the state of the rest of the industry).
-Regardless, we judge our development experience as very positive and we would encourage others
-with interest in game programming to try Haskell themselves.
+(at least compared to the rest of the industry).
+Regardless, we judge our development experience as very positive, and we would encourage others
+interested in game programming to try Haskell themselves.
 It may not currently be the safest way to bring a game to the market,
-but at bare minimum it is a valuable learning experience and at best a step for the whole industry
+but at the bare minimum, it is a valuable learning experience and, at best,a step for the whole industry
 towards better game engines with all of the perks of purely functional programming.
 
-Here we can notice a certain paradox: the benefits of pure functional design
-become most significant in the long term and large scale.
-However, our examples are small in scale and it remains to be proven
-in practise that our findings could be applied to more complex games
-without running into issues with laziness for instance.
-
-Moreover, we would be curious to see weather adding the actual parallelism into pure-asteroids
-would better the performance even at that scale, and additionally,
+The benefits of purely functional design become most significant in the long term and large scale.
+However, our examples are small in scale, and so it remains to be proven
+in practice that our findings are applicable to more complex games
+without running into issues with laziness, for instance.
+Moreover, we would be curious to see whether adding the parallelism into pure-asteroids
+would better the performance even at that scale, and further,
 how it would compare to the data-oriented design of apecs as the entity counts grow.
 
 
@@ -2238,6 +2234,7 @@ draw w = do
 
 
 \chapter{More examples of functional elegance}
+\label{app:elegance}
 maybe?\\
 compile a bunch of things that are just "nice"
 
