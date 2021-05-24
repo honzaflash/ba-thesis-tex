@@ -103,6 +103,7 @@
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{dirtytalk}
+\usepackage{dirtree} %% fancy directory structure
 
 \usepackage{floatrow} %% Putting captions above tables
 \floatsetup[table]{capposition=top}
@@ -176,7 +177,7 @@ first using the apecs\footfullcite{apecsrepo} library
 and for a second time without it. After a further discussion
 about chosen technologies in the following chapter,
 said three implementations are described and analyzed
-in chapters \ref{chptr:hasteroids}, \ref{chptr:purity}, and \ref{chptr:impasteroids}.
+in chapters \ref{chptr:hasteroids}, \ref{chptr:purity}, and~\ref{chptr:impasteroids}.
 Then they are more closely compared
 and the pros and cons of Haskell in game development are
 evaluated and demonstrated in Chapter~\ref{chptr:evaluation}.
@@ -216,12 +217,12 @@ instead of giving the computer serialized instructions (\emph{imperatives}).
 That is manifested in the lack of assignment statements and lesser control structures.
 Once variables are assigned their value, it cannot be changed,
 and the \say{burden} of prescribing the flow of control
-is removed.\cite{whyfpmatters} Moreover, a pure function has no side effects,
+is removed \cite{whyfpmatters}. Moreover, a pure function has no side effects,
 and its return value depends solely on its arguments. This makes for deterministic
 programs that are easier to test, debug and argue about their correctness.
 
 John Hughes describes the key benefits of the functional paradigm in his paper
-\textit{Why Functional Programming Matters}.\cite{whyfpmatters} He first
+\textit{Why Functional Programming Matters} \cite{whyfpmatters}. He first
 explains how modularity of code is essential, since
 separate modules are easier to write and test and then proceeds
 to show how functional programming increases modularity
@@ -285,12 +286,12 @@ pioneering is worth it.
 \subsection{Existing work}
 \label{sect:existing}
 Indeed, people have tried developing games in Haskell, and a decent
-progress has been made over the years. There are libraries and engines like Yampa\cite{yamparepo}
-and Helm\cite{helmrepo} for functionally reactive programming (FRP) of video games and
-other general FRP libraries that have been used to make games, like Elerea\cite{elerearepo}
-or Netwire\cite{netwirerepo}. From non-FRP libraries, there is
-FunGEn\cite{fungenrepo}, the self-proclaimed oldest Haskell game engine,
-apecs\cite{apecsrepo}, which we use to program a game and describe the process
+progress has been made over the years. There are libraries and engines like Yampa \cite{yamparepo}
+and Helm \cite{helmrepo} for functionally reactive programming (FRP) of video games and
+other general FRP libraries that have been used to make games, like Elerea \cite{elerearepo}
+or Netwire \cite{netwirerepo}. From non-FRP libraries, there is
+FunGEn \cite{fungenrepo}, the self-proclaimed oldest Haskell game engine,
+apecs \cite{apecsrepo}, which we use to program a game and describe the process
 in Chapter~\ref{chptr:hasteroids}, and many others. It is important to note that
 most of these libraries or engines provide only limited capabilities
 compared to \say{real} industry engines like Unity or Unreal Engine
@@ -299,10 +300,10 @@ of work left for the developer.
 
 Regarding existing games themselves, there are two --- Magic Cookies and
 Enpuzzled --- that have been commercially published by Keera Studios,
-who also stand behind the Yampa game engine\cite{keerastudios}.
+who also stand behind the Yampa game engine \cite{keerastudios}.
 Then there is Chucklefish, indie game developer studio, publisher, and
 the creator of popular Starbound, which announced to be working on their next
-game Wayward Tide in Haskell back in 2014\cite{waywardtide}. However, there
+game Wayward Tide in Haskell back in 2014 \cite{waywardtide}. However, there
 has not been an announcement of the release date as of 2021, and the studio is
 focusing on other projects at the moment.
 % TODO maybe mention LambdaCube3d and the Quake map viewer + the wolf 3d
@@ -314,10 +315,10 @@ on the Haskell game development Reddit page\footnote{
 Subreddit about game development in Haskell: \url{http://www.reddit.com/r/haskellgamedev/}
 }
 for instance. Many have also written blog posts or tutorials alongside with
-their games like Joe Vargas and his \textit{A Game in Haskell - Dino Rush}\cite{dinorush},
+their games like Joe Vargas and his \textit{A Game in Haskell - Dino Rush}~\cite{dinorush},
 which goes in-depth and explains his well thought out architecture,
-or Ashley Smith and her \textit{Of Boxes and Threads: Games development in Haskell}\cite{aashaskell}
-and \textit{An Introduction to Developing games in Haskell with apecs}\cite{aasapecs},
+or Ashley Smith and her \textit{Of Boxes and Threads: Games development in Haskell}~\cite{aashaskell}
+and \textit{An Introduction to Developing games in Haskell with apecs}~\cite{aasapecs},
 that provide a great overview and inspiration.
 
 
@@ -326,7 +327,7 @@ that provide a great overview and inspiration.
 Essential part of a game engine is communicating with the operating system
 and rendering models or textures. To do this, we can
 either use a complete engine like the before mentioned Helm or
-a library built for this purpose like Gloss\cite{glossrepo}, which aims to provide an easy-to-use
+a library built for this purpose like Gloss~\cite{glossrepo}, which aims to provide an easy-to-use
 interface for managing input and rendering. Other libraries
 provide only Haskell bindings to existing media frameworks like GLUT, GLFW, and SDL
 (Gloss uses GLUT or GLFW for its backend). The main goal of these libraries is
@@ -374,7 +375,7 @@ replacing them with Haskell's \inlinehs{Maybe},
 and throwing an error instead of returning a negative value.
 
 \begin{listing}[H]
-\caption{Example of FFI binding.\cite{sdlrepo}}
+\caption{Example of FFI binding \cite{sdlrepo}.}
 \label{lst:ffi}
 \begin{haskell}
 -- the C function (https://wiki.libsdl.org/SDL_RenderCopy):
@@ -422,12 +423,12 @@ on the code implementing the game rules and behaviors.
     \begin{minipage}{0.66\textwidth}
         \hfill \includegraphics[height=0.65\textwidth]{images/atariasteroids-screenshot.png}
     \end{minipage}
-    \caption{Atari Asteroids --- Promotional flyer cover\cite{asteroidsflyer}
-    and gameplay screenshot.\cite{asteroidsscreenshot}}
+    \caption{Atari Asteroids --- Promotional flyer cover~\cite{asteroidsflyer}
+    and gameplay screenshot~\cite{asteroidsscreenshot}.}
 \end{figure}
 
 The game can be described as followed:
-\say{A perfect synergy between simplicity and intense gameplay, the game has players using buttons to thrust a spaceship around an asteroid field. When one rock is shot, it breaks into smaller ones, often flying off in different directions at different speeds\ldots{} Every so often flying saucers enter the screen, intent on the player’s destruction.}\cite{aboutasteroids}
+\say{A perfect synergy between simplicity and intense gameplay, the game has players using buttons to thrust a spaceship around an asteroid field. When one rock is shot, it breaks into smaller ones, often flying off in different directions at different speeds\ldots{} Every so often flying saucers enter the screen, intent on the player’s destruction.} \cite{aboutasteroids}
 Its world comprises rocks (asteroids, in three sizes), projectiles,
 flying saucers (large and small, trying to shoot the player) and the ship, controlled by the player,
 trying to survive and gain score points by shooting down rocks and flying saucers.
@@ -446,23 +447,23 @@ and its menus, and then render everything.
 
 \section{About apecs}
 \label{sect:apecs}
-\say{apecs: a fast, type-driven Entity\textendash{}Component\textendash{}System library for game programming}\cite{apecsrepo}
+\say{Apecs: a fast, type-driven Entity\textendash{}Component\textendash{}System library for game programming} \cite{apecsrepo}
 is one of the more recently released libraries.
 Entity\textendash{}Component\textendash{}System (or ECS) is a data-oriented architectural pattern often
 used in video game engines to represent the game world state.
 In a true ECS, a game object or an \textbf{entity} is only an ID number,
 and data is attached to it by being stored under that ID. This data is
 organized into \textbf{components}, which are then stored in separate
-lists with other components of the same type from other entities.\cite{mediumecs} This can
+lists with other components of the same type from other entities \cite{mediumecs}. This can
 be represented as a table where every column is its own list or array
 (see Table~\ref{tab:ecsexamp}). Then we define game logic as \textbf{systems}
 --- a set of functions that operate on certain components regardless of the
 entity as a whole. A typical example of a system is adding an entity's velocity
 to its position for every entity with both of those components.
-ECS usually provide better performance than object-oriented designs (OOD)
+ECS usually provide better performance than object-oriented designs
 because of their increased data locality --- a system needs to load into memory
 only components that are relevant for it, not the whole \emph{objects}
-as it would be with OOD.\cite{apecspaper}
+as it would be with OOP \cite{apecspaper}.
 \begin{table}[htp]
   \begin{tabularx}{320pt}{|r|lllX|}
     \toprule
@@ -483,7 +484,7 @@ we chose apecs as the current state-of-the-art Haskell library
 for the traction it has received in the community despite
 it not being the only ECS library in existence.\footnote{
 The making of the Ecstasy library was actually inspired by
-author's issues with apecs as she explains on her blog.\cite{whyecstasy}
+author's issues with apecs as she explains on her blog \cite{whyecstasy}.
 }
 
 \begin{listing}[H]
@@ -548,7 +549,7 @@ accepts a tuple of components and adds them into their records under a new ID.
 More noteworthy functions to build systems are the component map functions
 shown in the Listing~\ref{lst:cmaps}. They are the means of altering the world state.
 \begin{listing}[H]
-\caption{Component maps documentation.\cite{apecsdocs}}
+\caption{Component maps documentation \cite{apecsdocs}.}
 \begin{haskell}
 -- 'w' is the world type, 'm' is a monad,
 -- 'cx','cy' and 'c' are tuples of components
@@ -593,10 +594,12 @@ Furthermore, with \inlinehs{cmaM_} there is no direct writing, only side effects
 \end{figure}
 
 \noindent In this section, we outline how we used apecs in the hAsteroids game.
-For the exact implementation, please refer to the attached source files in the hAsteroids directory.
+For the exact implementation, please refer to the attached source files
+in the hAsteroids directory.\footnote{
+Attachment structure is briefly described in Appendix~\ref{app:attach}.}
 Figure~\ref{fig:hasteroidsmodules} shows project's modules with loosely indicated
 dependencies --- upper modules may have direct dependencies on the lower modules,
-arrows show most important ones. % this miiiighttt be refactored still
+arrows show most important ones.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/modules.png}
@@ -626,7 +629,7 @@ the player or a UFO shot it. Next, there are the shared components
 \inlinehs{Position}, \inlinehs{Velocity} and \inlinehs{TimeToLive}
 and several \inlinehs{Global} control ones like \inlinehs{ShipLives},
 \inlinehs{ShipState}, \inlinehs{GameLoopState}, \inlinehs{WaveTime} and few others.
-Table \ref{tab:entities} shows which game object types should have which components;
+Table~\ref{tab:entities} shows which game object types should have which components;
 however, it cannot be enforced by types due to the nature of ECS.
 
 \begin{table}[hbt]
@@ -638,10 +641,10 @@ however, it cannot be enforced by types due to the nature of ECS.
     % UFO      & \inlinehs{Position}, \inlinehs{Velocity}, \inlinehs{TimeToLive}, \inlinehs{Ufo} \\
     % Bullet   & \inlinehs{Position}, \inlinehs{Velocity}, \inlinehs{TimeToLive}, \inlinehs{Bullet} \\
     % Asteroid & \inlinehs{Position}, \inlinehs{Velocity}, \inlinehs{Asteroid} \\
-    Ship     & {Position}, {Velocity}, {Ship} \\
-    UFO      & {Position}, {Velocity}, {TimeToLive}, {Ufo} \\
-    Bullet   & {Position}, {Velocity}, {TimeToLive}, {Bullet} \\
-    Asteroid & {Position}, {Velocity}, {Asteroid} \\
+    Ship     & \texttt{Position}, \texttt{Velocity}, \texttt{Ship} \\
+    UFO      & \texttt{Position}, \texttt{Velocity}, \texttt{TimeToLive}, \texttt{Ufo} \\
+    Bullet   & \texttt{Position}, \texttt{Velocity}, \texttt{TimeToLive}, \texttt{Bullet} \\
+    Asteroid & \texttt{Position}, \texttt{Velocity}, \texttt{Asteroid} \\
     \bottomrule
   \end{tabularx}
   \caption{Game objects and their components.}
@@ -854,43 +857,43 @@ benefits of purely functional programming.
 \section{Game engines in purely functional style}
 \label{sect:pureengines}
 
-In the previous chapter we see how a program in Haskell can still be
+In the previous chapter, we see how a program in Haskell can still be
 written in a very imperative style. 
-This is certainly a valid approach and has its benefits as we discuss
-further in Chapter~\ref{chptr:evaluation} but for the second version of
-Asteroids (project \emph{pure-asteroids}) we focus on functional purity,
-clarity and proper compartmentalization.
+This is certainly a valid approach and has its benefits, as we discuss
+further in Chapter~\ref{chptr:evaluation}. However, for the second version of
+Asteroids (project \emph{pure-asteroids}), we focus on functional purity,
+clarity, and proper compartmentalization.
 
-The design is inspired by a keynote\cite{carmackkeynote} of John Carmack, the co-founder
+The design is inspired by a keynote \cite{carmackkeynote} of John Carmack, the co-founder
 of id~Software and co-creator of the Doom and Quake games.%\cite{carmackbio}
-At one point in the keynote he talks about how he had been moving towards
-a functional style of programming with \cpp{} and seeing the long term benefits.
+At one point in the keynote, he talks about how he had been moving towards
+a functional style of programming with \cpp{} and seeing the long-term benefits.
 He also talked about his experiments with Haskell and his vision for multi-core
-game logic. \say{State of where we're at right now with game code, is that we run
+game logic. \say{State of where we're at right now with game code is that we run
 all the game code in one thread because the idea of using locks to synchronize
-amongst all of our current game code was just absolutely terrifying,} he says and
-continues to explain how independent parallelism is much more feasible with pure
+amongst all of our current game code was just absolutely terrifying,} he says.
+Then, explains how independent parallelism is much more feasible with pure
 functions and how events can be used for interactions between the isolated groups.
 
 The world-updating function can be split into individual sub-functions that update each group
-of entities. Each sub-function is passed the game world and the group of entities and
-it returns the updated group, therefore, in Haskell, such function cannot affect
+of entities. Each sub-function is passed the game world and the group of entities, and
+it returns the updated group; therefore, in Haskell, such function cannot affect
 anything outside of the group it returns. For that reason, it could be easily run
 in parallel, increasing the performance.
 
-With this approach, comes one more advantage
---- all entities are being updated based on the same image of past state, meaning
+With this approach comes one more advantage
+--- all entities are being updated based on the same image of the past state, meaning
 it does not matter in what order entities are updated, the result will be the same.
 This can be contrasted with a naive imperative approach, where entities are
-updated sequentially in-place based on the current state. Such approach may lead to
-inconsistencies if for example two units attack each other at the exact same time.
-Or to give an example from Asteroids, if a UFO and the ship shoot at each other
+updated sequentially in-place based on the current state. Such an approach may lead to
+inconsistencies if, for example, two units attack each other at the exact same time.
+Alternatively, to give an example from Asteroids, if a UFO and the ship shoot at each other
 with an asteroid in between them, whichever bullet's collision is detected first
-would destroy the bullet and the asteroid and the other bullet would fly through
-killing either the UFO or the ship. However, the opposite approach comes with a caveat
+would destroy the bullet and the asteroid, and the other bullet would fly through,
+killing either the UFO or the ship. However, the opposite approach comes with a caveat,
 and that is the issue of two objects moving into a common space when they are not allowed to overlap.
-John Carmack addresses this in his already mentioned keynote\cite{carmackkeynote} and
-says it can be solved for instance by some kind of repulsion force. Fortunately, this
+John Carmack addresses this in his already mentioned keynote \cite{carmackkeynote} and
+says it can be solved, for instance, by some kind of repulsion force. Fortunately, this
 is a non-issue in Asteroids because all objects may overlap, usually causing a collision
 and destruction.
 
@@ -907,14 +910,17 @@ and destruction.
     \label{fig:pureasteroidsscreenshot}
 \end{figure}
 
-In this section we describe how \emph{pure-asteroids} implements a pure style engine described
+\noindent In this section, we describe how \emph{pure-asteroids} implements a pure style engine described
 in the \hyperref[sect:pureengines]{previous section}.
+For the exact implementation, please refer to the attached source files
+in the pure-asteroids directory.\footnote{
+Attachment structure is briefly described in Appendix~\ref{app:attach}.}
 The program's main function is very similar to the one from
-hAsteroids with the exception of texture loading because pure-asteroids
-draws vector graphics using \inlinehs{drawScene}. There is also no reader monad
+hAsteroids except for texture loading because pure-asteroids
+draws vector graphics much like the original Asteroids. There is also no reader monad,
 and \inlinehs{gameLoop} is passed everything explicitly as arguments.
-The looping itself is also very similar to hAsteroids but naturally,
-the world updating and drawing differs. The world state passes through
+The looping itself is also similar to hAsteroids, but naturally,
+the world updating and drawing differ. The world state passes through
 \inlinehs{processWorldEvents}, which fulfils all the requests from events,
 through \inlinehs{stepWorld}, which simulates physics and game rules and generates new events,
 \inlinehs{drawScene} draws it and \inlinehs{resetIfNewGame} returns a reinitialized
@@ -936,9 +942,11 @@ how the \textbf{stepper function} and \textbf{event processing} use them.
 % \end{figure}
 
 
+
 \subsection{Data structures}
-The two main data structures, as already shown in Figure~\ref{fig:worldeventsflow},
-are the world sate represented by \inlinehs{World} and the events for communication
+
+The two primary data structures, as already shown in Figure~\ref{fig:worldeventsflow},
+are the world state represented by \inlinehs{World} and the events for communication
 between entity groups represented by \inlinehs{WorldEvents}.
 
 The definition of \inlinehs{World} can be seen in Listing~\ref{lst:pureworld}.
@@ -996,8 +1004,8 @@ data ShipState
 
 Listing~\ref{lst:events} shows the event package type \inlinehs{WorldEvents}.
 It also has an instance of \inlinehs{Monoid}, which allows us to collect the packages from
-each entity group and combine them into one in the \textbf{stepper function}
-and then we distribute the events to their addressed entity groups in \textbf{event processing}.
+each entity group and combine them into one in the \textbf{stepper function}.
+Then we distribute the events to their addressed entity groups in \textbf{event processing}.
 The individual event types and the information they carry are described later,
 with the functions that process them.
 
@@ -1024,7 +1032,7 @@ data WorldEvents =
 We can see the combining of event packages happen in the definition of \inlinehs{stepWorld}
 in Listing~\ref{lst:purestepworld}. The events are returned by
 the individual steppers of each entity group together with the stepped versions
-of those groups. Note how lenses are used to \say{focus} on the contents of world state
+of those groups. Note how lenses are used to \say{focus} on the contents of the world state
 and change them with the setter operator \inlinehs{.~} or the function applicator \inlinehs{%~}
 (or also the lens equivalent of \inlinehs{+=}).
 Each \say{substepper} is compartmentalized and could be made to run in parallel.
@@ -1058,14 +1066,14 @@ stepWorld dT input rand oldW =
 
 Figure~\ref{fig:entitygroups} shows which events, represented by their value constructors,
 entities may send to others.
-The working of the individual \say{substeppers} can be summarized as follows:
+The working of the individual substeppers can be summarized as follows:
 \begin{itemize}[--]
     \item \inlinehs{stepShip}\\
-    changes the ship's angle and velocity based on the input, and updates its position.
-    It also detects collisions with asteroids and UFOs. In the case of a collision
+    changes the ship's angle and velocity based on the input and updates its position.
+    It also detects collisions with asteroids and UFOs. In the case of a collision,
     it adds an event with the entity's id to the event package. Moreover, it subtracts
     a life in that case and changes the ship's state attribute, which results in
-    a spinning explosion animation next few frames, and then a position reset followed by
+    a spinning explosion animation next few frames. Then a position reset followed by
     a second of invincibility. All of that is done in \inlinehs{stepShip} conditioned by the state.
 
     \item \inlinehs{stepAsteroids}\\
@@ -1075,34 +1083,34 @@ The working of the individual \say{substeppers} can be summarized as follows:
     first filters out bullets that run out of time to live (TTL), and then it uses \inlinehs{traverse}
     to call \inlinehs{stepBullet} on all the bullets, collecting all events as an
     \inlinehs{Applicative} side effect.\footnote{
-    We use the predifined \inlinehs{instance Monoid a => Applicative ((,) a)},
+    We use the predefined \inlinehs{instance Monoid a => Applicative ((,) a)},
     where \inlinehs{a} is our \inlinehs{WorldEvents} package.}
-    \inlinehs{stepBullet} then updates position, decrements TTL or marks the bullet for
+    \inlinehs{stepBullet} then updates position, decrements TTL, or marks the bullet for
     deletion by setting TTL to 0 if a collision was detected. Bullets check for collisions
     with everybody else and send them events, together with a reward event for \inlinehs{Score}
     if the bullet was shot by the ship.
-    Finally, we insert a new bullet if space bar was pressed.
+    Finally, we insert a new bullet if the space bar was pressed.
 
     \item \inlinehs{stepUfos}\\
     operates similarly to \inlinehs{stepBullets}. It filters out the ones out of TTL,
-    traverses over all of them and at the end it randomly inserts a new UFO.
+    traverses over all of them, and at the end, it randomly inserts a new UFO.
     During the traversal, positions, TTLs, and \say{time-to-shoot} counters are updated.
-    It checks for collisions with asteroids, and sends an event together with setting its TTL
+    It checks for collisions with asteroids and sends an event together with setting its TTL
     to 0 if that happens. Additionally, when the time-to-shoot timer reaches 0, it is refreshed
-    to 2000~ms and an event is sent to \inlinehs{Bullets} as a request to insert their shot
+    to 2000~ms, and an event is sent to \inlinehs{Bullets} as a request to insert their shot
     with information about the direction and position. The direction is calculated using
     one of the same two algorithms as in hAsteroids.
 
     \item \inlinehs{stepScore}\\
-    sends and event to the ship, awarding it with an extra life for every 10\thinspace{}000 points gained.
+    sends an event to the ship, awarding it with an extra life for every 10\thinspace{}000 points gained.
 \end{itemize}
-After that, \inlinehs{checkWave} takes care of spawning new waves of asteroids
+After that, \inlinehs{checkWave} takes care of spawning new waves of asteroids,
 and then the stepped world is paired with the collected, generated events and returned.
 
 % Entity interactions figure
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/entity-relationships-transparent-bg.png}
+    \includegraphics[width=0.9 \textwidth]{images/entity-relationships-transparent-bg.png}
     \caption{Entity groups and their interactions.}
     \label{fig:entitygroups}
 \end{figure}
@@ -1113,8 +1121,8 @@ and then the stepped world is paired with the collected, generated events and re
 
 In Listing~\ref{lst:pureprocessevents}, we can see the implementation of
 event processing and again the use of lenses.
-Similarly to \inlinehs{stepWorld}, the work is compartmentalized
-and could be made to run in parallel, even though there is not that many
+Similar to \inlinehs{stepWorld}, the work is compartmentalized
+and could be made to run in parallel, even though there are not that many
 events sent each frame in the current game.
 % processWorldEvents definition
 \begin{listing}
@@ -1149,16 +1157,16 @@ processUfosEvents =
             HM.delete idU
 \end{haskell}
 
-The rest of the subprocessors differ in the function used to apply an event to the collection
-that way fulfilling the request. All the possible events are also shown in the
-Figure~\ref{fig:entitygroups}, here we list their value constructor definitions,
+The rest of the \say{subprocessors} differ in the function used to apply an event to the collection
+to fulfil the request. All the possible events are also shown in
+Figure~\ref{fig:entitygroups}, here we list their value constructor definitions
 and briefly describe what they cause or request:
 \begin{itemize}[--]
     \item \inlinehs{BreakE Int}\\
     causes the addressed asteroid to break into two or to be deleted if it is the smallest size.
     
     \item \inlinehs{HitE | GainLifeE}\\
-    causes the ship to either loose a life, and set the state to \inlinehs{Exploding}
+    causes the ship to either lose a life and set the state to \inlinehs{Exploding}
     or to gain an extra life.
     
     \item \inlinehs{DestroyE Int}\\
@@ -1180,8 +1188,8 @@ and briefly describe what they cause or request:
 
 Overall, pure-asteroids achieves what it set out to do --- we can observe
 many of the benefits described in Section~\ref{sect:whyfpmatters}.
-Because it uses less abstraction, the code is safer and more expressive.
-For example, by looking at \inlinehs{shoot} from the \inlinehs{Step.Bullets} module
+Because it does not use much abstraction, the code is perceivably safer and more expressive.
+For example, we can look at \inlinehs{shoot} from the \inlinehs{Step.Bullets} module:
 \begin{haskell}
 shoot :: InputState -> World -> Bullets -> Bullets
 shoot input w =
@@ -1192,35 +1200,34 @@ shoot input w =
 We immediately see from the name and the type signature that the function presumably
 somehow alters the collection of \inlinehs{Bullet}s based on the input and that
 the alteration is probably adding a new bullet, which is confirmed by looking
-at the next four lines of light code. And this also means that it is \emph{the only thing}
-the function can do --- it clearly cannot change the state of the ship, read from a file
-or render a white square.
+at the following four lines of light code. Moreover, this also means that it is \emph{the only thing}
+the function can do --- it clearly cannot change the state of the ship, read from a file,
+or render a white square on the screen.
 
-It also incorporates what we may call \say{functional elegance}.
+It also incorporates what we may call \emph{functional elegance}.
 Throughout the code base, we use functions like \inlinehs{map}, \inlinehs{filter},
-\inlinehs{fold}, \inlinehs{traverse} and many others, that Haskell programmers are familiar
+\inlinehs{fold}, \inlinehs{traverse} and many others that Haskell programmers are familiar
 with and which make the code brief and save us time.
 
-Most importantly, as we demonstrated, the design could be adapted to
+Most importantly, as we have demonstrated, the design could be adapted to
 use parallelism, which we expect would increase performance.
-Parallel computation would be especially beneficial if the game was of larger scale
-and the computation was more demanding --- for instance collision detection
-in pure-asteroids is very simple but it could be improved by using more
-complicated algorithms.
+Parallel computation would be especially beneficial if the game were of a larger scale
+and the computation were more demanding --- for instance, collision detection
+in pure-asteroids is elementary, but it could be improved by using more complicated algorithms.
 
 However, even though we could use parallelism, the scalability of our design is somewhat lacking.
-It would be appropriate to use more typeclasses in general. A class interface for
-collision detection, stepping, communication using events and for resources abstraction.
+It would be appropriate to use more typeclasses in general --- a class interface for
+collision detection, stepping, communication via events, and using resources.
 Pure-asteroids is too explicit, which makes it relatively rigid
---- adding a random number
-generator to a bottom-level function, requires passing it from the top level
-as an argument through the whole function chain. And the long type signatures of the
-top-level functions make them actually less clear.
+--- adding a random number generator to a bottom-level
+function requires passing it from the top level
+as an argument through the whole function chain. Besides, the long type signatures of the
+top-level functions make them less clear.
 
-Ultimately, we see that explicitness is good but has its boundaries,
+Ultimately, we see that explicitness is good but has its boundaries
 and that some level of abstraction is needed. 
-It should be also pointed out that designing the complete engine from scratch
-was a significant amount of effort, despite the development being smooth and the final
+It should also be pointed out that designing the complete engine from scratch
+took a significant effort, despite the development being smooth and the final
 product working well.
 
 
@@ -1238,7 +1245,7 @@ use to compare against in Chapter~\ref{chptr:evaluation}.
 We shall refer to it as \say{imp-asteroids}.
 It was made by Jason Halverson, and its GitHub repository can be found at
 \url{https://github.com/Halverson-Jason/Asteroids}. We created a fork of
-this repository with a branch named \inlinecpp{organized}\cite{impasteroidsrepo}
+this repository with a branch named \inlinecpp{organized}~\cite{impasteroidsrepo}
 with the original game with reorganized and reformatted files for convenience.
 
 We acknowledge that \cpp{} may not be the most relevant comparison
@@ -1253,8 +1260,7 @@ The game was made as a school assignment, and from the commented \inlinecpp{TODO
 throughout the code, we can judge that there were certain time limitations.}
 but we point out its mistakes and present them as a possible outcome of this language choice.
 Though, the choice does not imply nor condition such an outcome.
-
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.5 \textwidth]{images/imperative-asteroids.jpg}
     \caption{A screenshot of imp-asteroids.}
@@ -1262,7 +1268,7 @@ Though, the choice does not imply nor condition such an outcome.
 \end{figure}
 
 
-
+\pagebreak
 \section{Differences in features}
 
 This version differs from our two implementations in many ways,
@@ -1369,8 +1375,8 @@ One could argue that this is not an issue and that programmers only need be
 more competent about their usage of these powers. To combat this, the already quoted
 John Carmack talked about how being a technical director over millions of lines of code,
 he saw how \say{everything that is syntactically legal that the compiler will accept,
-will eventually wind up in your codebase.}\cite{carmackkeynote} He also said that
-\say{it's just amazing how many mistakes, and how bad programmers can be.}\cite{carmackkeynote}
+will eventually wind up in your codebase.} \cite{carmackkeynote} He also said that
+\say{it's just amazing how many mistakes, and how bad programmers can be.}~\cite{carmackkeynote}
 Because programmers are, after all, only humans, systems like the functional paradigm,
 that limit their ability to be \say{bad} can be of great use, as we demonstrate
 further in the following chapter.
@@ -1384,29 +1390,28 @@ further in the following chapter.
 \chapter{Evaluation of the approaches}
 \label{chptr:evaluation}
 
-In this chapter we first compare Haskell to imperative languages in general or specifically to \cpp{},
+In this chapter, we first compare Haskell to imperative languages in general or specifically to \cpp{},
 often referencing back to the promised benefits of Haskell from Section~\ref{sect:whyfpmatters}.
-Then we discuss the conflicts observed in the comparisons and their possible solutions
-and finally summarize our findings.
+Then we discuss the conflicts observed in the comparisons and their possible solutions.
 
 
 \section{Comparison}
 
-In this section we compare the three example implementations or more broadly Haskell and
+This section compares the three example implementations or, more broadly, Haskell and
 imperative languages represented by \cpp{}.
-For this we reference the previous chapters about individual implementations.
+For this, we reference the previous chapters about individual implementations.
 It is important to note that \cpp{} is by no means meant
-to represent imperative languages fully, even less so is the chosen imperative implementation
-of Asteroids (further referred to as imp-asteroids) meant to represent
-the ideal of a game in \cpp{}. Not only it has flaws but it is also an even
+to represent imperative languages fully; even less so is the chosen imperative implementation
+of Asteroids (further referred to as \textit{imp-asteroids}) meant to represent
+the ideal game design in \cpp{}. Not only it has flaws, but it is also an even
 simpler version of the original game in some ways than our two implementations.
-We try to address this in especially relevant places,
+We try to address this in especially relevant places;
 in others, it is left out for the sake of conciseness and readability.
 
 The comparison is organized by qualities important in game development:
 flexibility and scalability, expressiveness and safeness, development costs, performance.
-The section is then closed off by additional comparison of state abstraction
-and with few statistical observations about the code bases.
+The section is then closed off by an additional comparison of state abstraction
+and few statistical observations about the codebases.
 
 
 
@@ -1415,21 +1420,21 @@ and with few statistical observations about the code bases.
 Both \textbf{hAsteroids} and \textbf{imp-asteroids} are very flexible designs.
 Because in hAsteroids, the monad return type of most functions is not very
 restrictive at all, we can add in and take away effects or resources with ease.
-Similarly the imperative version is highly flexible in this sense. When it comes
+Similarly, the imperative version is highly flexible in this sense. When it comes
 to scalability, both do decently well. Adding new game objects in hAsteroids can be done by
 defining more components and needed systems. Already existing components and systems can be reused
 like \inlinehs{Position}, \inlinehs{Velocity} and \inlinehs{stepKinetics}.
 One issue would be the expansion of collision detection,
-which is done on an individual basis, therefore the amount of work
-would grow linearly with increasing number of game objects.
-imp-asteroids do better in this regard --- kinetic properties can
+which is done on an individual basis; therefore, the amount of work
+would grow linearly with an increasing number of game objects.
+Imp-asteroids does better in this regard --- kinetic properties can
 be inherited from \inlinecpp{FlyingObject} as well as the ability to detect collisions.
-The issue there might be if we wanted to inherit only parts of \inlinecpp{FlyingObject}.
-Also with large scale, the safeness becomes more of a concern for both games
+The issue here might be if we wanted to inherit only parts of \inlinecpp{FlyingObject}.
+Also, with a large scale, the safeness becomes more of a concern for both games
 --- more on that in the following subsection.
 
 We have already described how \textbf{pure-asteroids} are rather rigid because of
-their lack of abstraction. Scalability is also worse than the other two, since
+their lack of abstraction. Scalability is also worse than the other two since
 adding new objects would require writing their whole \say{substepper} and
 new event paths, and collision detection is handled similarly to hAsteroids.
 
@@ -1439,19 +1444,22 @@ new event paths, and collision detection is handled similarly to hAsteroids.
 
 As we have already discussed in Chapter~\ref{chap:motivationandmethods},
 functional languages are designed to be clearer (\emph{expressiveness})
-and to have better control of side effects (\emph{safeness}) then conventional
+and to better control side effects (\emph{safeness}) than conventional
 imperative languages. Now the imperative code can be even more or less unsafe
-depending on its type system. \cpp{} is mostly strongly and statically typed, which
-does provide a certain amount of assurance, some other languages are not.
-This can protect us from trying to add an object to a number for instance.
+depending on its type system. \cpp{} is mostly strongly and statically typed,
+providing a certain amount of assurance. Some other languages are not.
+This can protect us from trying to add an object to a number, for instance.
 
 Many languages also take various steps towards controlling side effects.
 One such example could be the \inlinecpp{const} keyword used to define a variable
-that cannot be mutated. In \cpp{} this keyword can also be used on methods
+that cannot be mutated. In \cpp{}, this keyword can also be used on methods
 to prevent them from changing the state of the object, allowing us to call these
-methods even on \inlinecpp{const} objects. Usage of this keyword, would prevent
-the author of imp-asteroids from writing this drawing function that
-unexpectedly also changes the state of bullets:
+methods even on \inlinecpp{const} objects. Usage of this keyword would prevent
+the author of imp-asteroids from writing the drawing function seen in Listing~\ref{lst:baddraw} that
+unexpectedly also changes the state of bullets.
+However, languages like Java or Python do not support immutable objects,
+and we can see how control of side effects, in general, is a \say{plan B} in the imperative paradigm.
+\begin{listing}[H]
 \begin{cppblock}
 void Game::draw(const Interface &ui) {
 
@@ -1465,30 +1473,31 @@ void Game::draw(const Interface &ui) {
     }
 }
 \end{cppblock}
-However, languages like Java or Python do not support immutable objects
-and we can see how control of side effects in general is a \say{plan B} in the imperative paradigm.
+\caption{The danger of side effects.}
+\label{lst:baddraw}
+\end{listing}
 
 Conversely, since Haskell originated as an academic language,
-functional purity was allowed to be plan A and having
-side effects was actually the plan B in this case.
-We saw how this together with the type system works out well for expressiveness and clarity
+functional purity was allowed to be plan A, and having
+side effects was actually plan B in this case.
+We saw how this, together with the type system, works out well for expressiveness and clarity
 in the example of \textbf{pure-asteroids}, as showcased on an exemplary function
 at the beginning of Section~\ref{sect:purereflection}.
 And because all variables are immutable, change is made explicit as a \emph{new} returned value
 that we pass forward.
-Moreover, any input/output side effects are clearly separated by the \inlinehs{IO} monad
-and the rest of the code is completely deterministic, which all together with strong static typing
+Moreover, any input/output side effects are clearly separated by the \inlinehs{IO} monad,
+and the rest of the code is entirely deterministic, which alltogether with strong static typing
 makes for a very safe language --- not only there is less potential sources of bugs, but the
 correctness of a program is \emph{easier to perceive} and argue about.
 
-That is, if used well --- \textbf{hAsteroids} turned out to be a very interesting game.
+That is if used well --- \textbf{hAsteroids} turned out to be a very interesting game.
 apecs makes game programming in Haskell approachable and provides
-very good performance by being \emph{strict and imperative}. This inner imperativness
+excellent performance by being \emph{strict and imperative}. This inner imperativeness
 makes purity sort of a plan B again, and the programmer has to be clever about using monad polymorphism
 if they want to keep \say{the danger of \inlinehs{IO}} contained. This has occurred to us in the middle
-of the hAsteroids development process and so we decided to embrace it and see where it leads.
-If we redesigned the types we could have reached better safeness and even expressiveness, however,
-with the game world sate abstracted it is still not always clear what functions do
+of the hAsteroids development process, so we decided to embrace it and see where it leads.
+If we had redesigned the types, we could have reached better safeness and even expressiveness.
+However, with the game world state abstracted, it is still not always clear what functions do
 when applied through \inlinehs{cmapM} or \inlinehs{cmapM_}.
 
 
@@ -1498,7 +1507,7 @@ when applied through \inlinehs{cmapM} or \inlinehs{cmapM_}.
 The purpose of any language feature can ultimately be seen as reducing the cost of development.\footnote{
 % By development costs, we mean mainly development speed and comfort.
 By development costs, we mean mainly time and endured frustration. Generally speaking,
-any piece of software can be written in any language, what differs is the cost.
+any piece of software can be written in any language; what differs is the cost.
 }
 The already discussed Haskell features all bring the costs down in certain scenarios, but there is more
 that we want to look at through the lens of development speed and comfort.
@@ -1506,7 +1515,8 @@ Both \textbf{pure-asteroids} and \textbf{hAsteroids} more or less benefit from t
 
 \subsubsection{Interpreter}
 One of such features is \textbf{GHCi}, \say{GHC's interactive environment,
-in which Haskell expressions can be interactively evaluated and programs can be interpreted.}\cite{ghciwiki}
+in which Haskell expressions can be interactively evaluated,
+and programs can be interpreted.} \cite{ghciwiki}
 Haskell is a compiled language that comes with an interpreter as well.
 An interpreter allows us to test short expressions quickly, either to try something new or to
 run bits of already existing code. \texttt{GHCi} can also print the types of expressions
@@ -1516,14 +1526,14 @@ for reminding ourselves of type signatures, testing vector manipulation, and mor
 
 \subsubsection{Functional elegance}
 Furthermore, there is many predefined high-order functions like
-\inlinehs{map}, \inlinehs{filter}, \inlinehs{foldl} and so forth. This way a part of the
-job is already done and we only need to provide the elemental function to fold with for instance.
-This together with being able to partially apply functions allows us to write
+\inlinehs{map}, \inlinehs{filter}, \inlinehs{foldl} and so forth. This way, a part of the
+job is already done, and we only need to provide the elemental function to fold with, for instance.
+This, together with being able to apply functions partially, allows us to write
 very \textbf{brief and elegant code}. In Listing~\ref{lst:elegance},
 we can see asteroid stepper implementations
 from imp-asteroids and pure-asteroids.\footnote{
-The \cpp{} version also spawns new wave of asteroids if the current has been cleared.
-That part of code was omitted as it is irrelevant for the example.
+The \cpp{} version also spawns a new wave of asteroids if the current has been cleared.
+That part of the code was omitted as it is irrelevant for the example.
 } The Haskell version uses \inlinehs{map} with a partially applied function,
 while too being only partially applied. Granted, other languages have structures
 to make this sort of task at least slightly more elegant too
@@ -1533,7 +1543,7 @@ to the whole Haskell code base --- in both of our games there is only three inst
 of explicit recursion in total: the game loops and \inlinehs{drawLines} in pure-asteroids.
 This is rather impressive considering the games have to manipulate collections of events,
 textures, entities, components and others. More examples of elegant code are appended at the end
-of this thesis in Apendix \ref{app:elegance}.
+of this thesis in Appendix~\ref{app:elegance}.
 We also address conciseness further, in Subsection~\ref{sect:codestats} (Code statistics).
 \begin{listing}[H]
 \begin{minted}[fontsize=\small, breaklines]{cpp}
@@ -1558,11 +1568,11 @@ stepAsteroids dT = HM.map (stepAsteroid dT)
 
 \subsubsection{Testing and debugging}
 Another benefit discussed at the beginning in Section~\ref{sect:whyfpmatters}
-is \textbf{ease of testing and debugging}. Testing a pure function is as simple or as complicated
+is the \textbf{ease of testing and debugging}. Testing a pure function is as simple or as complicated
 as the function's parameters and its output. Testing an impure function is
-theoretically nearly impossible to do \emph{exhaustively}, since without looking at
-its definition we do not know whether it reads from a file or not for instance.
-Practically, we do not need to be completely exhaustive and can make assumptions,
+theoretically nearly impossible to do \emph{exhaustively} since without looking at
+its definition, we do not know whether it reads from a file or not, for instance.
+Practically, we do not need to be completely exhaustive and can make assumptions;
 however, those unchecked assumptions are the weak spots that may cause problems.
 
 Due to time constraints, Haskell's safeness and the simple nature of Asteroids,
@@ -1599,11 +1609,11 @@ stepBullets dT w =
 \label{lst:testingexamp}
 \end{listing}
 To test \inlinehs{stepBullets} we need to provide three arguments. First is a simple
-integer and the other two are much more complex but still could be generated randomly using
+integer, and the other two are much more complex but still could be generated randomly using
 Haskell QuickCheck or provided \say{manually}. The only effect produced is the returned
 pair that can be checked for correctness by other functions. On the contrary, to test
 \inlinecpp{advanceBullets} we need to set up a \inlinecpp{Game} object with its contents,
-many of which are \inlinecpp{private}. That requires refactoring and
+many of which are \inlinecpp{private}. That requires refactoring, and
 the same applies to testing the state after \inlinecpp{advanceBullets} has been called.
 Additionally, we may want to test not only whether the collection of bullets has
 changed correctly but also whether the rest of the state is correct.
@@ -1616,16 +1626,16 @@ tested system checking the validity of all the components.
 Lastly, an obvious disadvantage is the fact that writing a game in Haskell
 is still largely a pioneering process. There is a decent amount of existing general tools,
 one of them being the already described interpreter,
-which can also be used to setup breakpoints and step through evaluation.
+which can also be used to set up breakpoints and step through evaluation.
 More extensive debuggers like Hat exist as well. We used Stack for easy management of
 the package and its dependencies. However, even some general tools such as a robust IDE
-are easier to find for other languages and in terms of game development specific tools,
-there is not many besides the several libraries like apecs listed in Section~\ref{sect:existing}.
-This can be contrasted with the complete, general engines, that come included with 
-tools for the whole development pipeline such as Unity.
+are easier to find for other languages, and in terms of game development specific tools,
+there are not many besides the several libraries like apecs listed in Section~\ref{sect:existing}.
+This can be contrasted with the complete, general engines that come included with 
+tools for the whole development pipeline, such as Unity.
 
-This was expected and it turned out not to be an issue as our example game was
-very simple. Yet, we can imagine that with a larger game we would start
+This was expected, and it turned out not to be an issue as our example game was
+very simple. Although, we can imagine that with a larger game, we would start
 to feel the need for more tools.
 
 
@@ -1633,17 +1643,17 @@ to feel the need for more tools.
 \subsection{Performance}
 
 Performance in games is very important since there is a real minimum requirement
-given by desired frame rate and player's expected hardware. A game can offer
+given by desired frame rate and the player's expected hardware. A game can offer
 a decent experience at 60 FPS, which gives us roughly 16 ms to do any computation
-we need for a single frame. With smaller games this is plenty, but as the entity
+we need for a single frame. With smaller games, this is plenty, but as the entity
 counts grow and rules get more complex, performance optimization becomes essential.
-For that reason we want to compare the performance of our implementations and
+For that reason, we want to compare the performance of our implementations and
 the tools available to optimize it.
 
 We put together simple \textbf{benchmarking} versions of all three games and ran them
-to find how many frames can be rendered in given time in similar situations.\footnote{
+to find how many frames can be rendered in a given time in similar situations.\footnote{
 The benchmarking versions can be found in their respective GitHub repositories
-on branch called \say{bench}:\\
+on a branch called \texttt{bench}:\\
 \url{https://github.com/honzaflash/cpp-asteroids/tree/bench}\\
 \url{https://github.com/honzaflash/ba-thesis/tree/bench/hAsteroids}\\
 \url{https://github.com/honzaflash/ba-thesis/tree/bench/pure-asteroids}
@@ -1651,14 +1661,14 @@ on branch called \say{bench}:\\
 The games were altered to spawn various, abnormal quantities of asteroids and
 run for ten seconds with the ship constantly spinning and shooting one bullet per frame.
 Note that the results are rather illustrational as the differences between games were not controlled
-very well: imp-asteroids uses GLUT with the FPS limited to maximum of 59, because of issues
+very well: imp-asteroids uses GLUT with the FPS limited to a maximum of 59, because of issues
 with \inlinecpp{stack exec} seemingly not running the programs at all on Windows,
 the Haskell games were run in the interpreter, hAsteroids renders
-textures instead of drawing vectors like the other two and there are other minor differences.
-The benchmark was run at least three times for every asteroid count and the median is shown
+textures instead of drawing vectors like the other two, and there are other minor differences.
+The benchmark was run at least three times for every asteroid count, and the median is shown
 in the results in Table~\ref{tab:benchfps}.
 
-\begin{table}
+\begin{table}[H]
   \begin{tabularx}{\textwidth}{|r|llX|}
     \toprule
     Asteroid count & \textbf{imp-asteroids} & \textbf{hAsteroids}\footnotemark & \textbf{pure-asteroids}\footnotemark[\value{footnote}] \\
@@ -1670,7 +1680,7 @@ in the results in Table~\ref{tab:benchfps}.
     50    & 59 & 74  & 92 \\
     25    & 59 & 117 & 140 \\
     10    & 59 & 141 & 154 \\
-    % 5 + 200 UFOs & -- & 8 & 83 \\
+    % 5 + 200 UFOs & -- & 8 & 83 \\ % fascinating but no time for diagnosing/analysis :'(
     \bottomrule
   \end{tabularx}
   \caption{Average FPS in the benchmarks.}
@@ -1682,45 +1692,53 @@ due to a problem with \inlinecpp{stack exec} on Windows.}
 We ran the benchmark for 100 asteroids also in a virtual machine with Ubuntu,
 where \inlinehs{stack exec} worked normally, and the results were quite different
 even if we account for the slower \say{virtual hardware}:
-46, 21 and 34 FPS respectively for imp-asteroids, hAsteroids and pure-asteroids.
-From these results with all three games being compiled we can assume,
+46, 21, and 34 FPS respectively for imp-asteroids, hAsteroids, and pure-asteroids.
+From these results, with all three games being compiled, we can assume,
 what is said to be true for Haskell in other fields,
 that its performance is mostly comparable to \cpp{}.
 Unfortunately, we did not have time to diagnose why apecs performed so poorly in this case.
-However, when comparing the two versions (hAsteroids and pure-asteroids) running in GHCi,
+However, when comparing the two versions (hAsteroids and pure-asteroids)
+running in GHCi on a physical machine,
 hAsteroids with apecs does outperform pure-asteroids by up to 100~\% for high entity counts.
 This was expected as apecs provides a data-oriented design that optimizes data locality in memory.
 
-Worthy of noting is also the profiling we did on the runs in Ubuntu.
-Most importantly it showed that neither of the games had issues with Garbage Collection (GC)
+Worthy of note is also the profiling we did on the runs in Ubuntu.
+Interestingly, we found out that drawing in hAsteroids accounts for less
+used time and allocated memory than in pure-asteroids.\footnotemark{} This eliminates the
+possibility of hAsteroids being bottlenecked by drawing textures instead of vectors.
+Most importantly, it showed that neither of the games had issues with Garbage Collection (GC)
 as this can become a problem with larger lazy systems.
 The productivity reported by the \mintinline{console}{-s} profiling flag was 99.1~\%
 for hAsteroids and 97.6~\% for pure-asteroids,
 meaning GC is not causing any meaningful delays in our games.
-% TODO mention something about cost centers, maybe refer to the html profiles
+\footnotetext{The profiling results can be found on the mentioned
+\texttt{bench} branch of our GitHub repository:
+\url{https://github.com/honzaflash/ba-thesis/tree/bench/pure-asteroids/results} and
+\url{https://github.com/honzaflash/ba-thesis/tree/bench/hAsteroids/results}.
+Specifically, the profiling of cost centers is in folders \texttt{opt-p}.}
 
 This brings us to the \textbf{tools} available and ease of \textbf{optimization} in general.
-As mentioned in the previous subsection, there are various tools including
-profilers for Haskell but \cpp{} will have larger variety. Another advantage
+As mentioned in the previous subsection, there are various tools, including
+profilers for Haskell, but \cpp{} will have a larger variety. Another advantage
 for \cpp{} in this discipline is its low-level access to hardware and memory management.
-Generally the less abstracted code is easier to optimize, since it is closer to
+Generally, the less abstracted code is easier to optimize since it is closer to
 what the CPU will actually execute. With more abstraction, more work must be
-done to find out what the CPU does in the end. This is especially the case for Haskell
-which has high level of abstraction and during compilation goes through \emph{three} intermediate
+done to find out what the CPU does in the end. This is especially the case for Haskell,
+which has a high level of abstraction and during compilation goes through \emph{three} intermediate
 languages, therefore if one desires to see how the code gets \say{unabstracted}, he must
-first learn at least the first of the intermediate languages --- Core.
+first learn at least the first of the intermediate languages (Core).
 To make up for this at least partially, as we have also stated before,
-GHC can do a lot of optimizing on its own and purely functional code is also easier
+GHC can do a lot of optimizing on its own, and purely functional code is also easier
 to execute in parallel and concurrently, which Haskell is very good at.
 
 
 
 \subsection{State abstraction}
 \label{sect:stateabstraction}
-One of the largest differences between the implementations is how they model game's state.
-Through this prism we can see once again how \textbf{hAsteroids} and \textbf{imp-asteroids}
+One of the largest differences between the implementations is how they model the game's state.
+Through this prism, we can see once again how \textbf{hAsteroids} and \textbf{imp-asteroids}
 are very similar. As we have mentioned before, because of the abstraction,
-the code in hAsteroids has a certain amount of imperative style and that includes the state
+the code in hAsteroids has a certain amount of imperative style, and that includes the state
 of the game world kept in a monad. Similarly, despite \cpp{} having a lower-level
 approach to memory and some other things, the object-oriented paradigm allows us
 to abstract the state in a relatively elegant way. Object's attributes
@@ -1734,11 +1752,11 @@ define its current state, which is implicitly passed to any of its methods.
 % o1.set(true); // call a method
 % \end{cppblock}
 
-The monad state is technically pure because in reality,
-its change is only a computation hidden behind the \inlinehs{>>=} operator,
+The monad state is technically pure because, in reality,
+its change is only a computation hidden behind the \inlinehs{>>=} operator
 that passes the change as a \emph{new} value forward without any mutation,
 and the operator itself then can be further hidden using the \inlinehs{do} block.\footnote{
-Reminder: \inlinehs{do str <- getLine; putStr str} is a shorthadnd for
+Reminder: \inlinehs{do str <- getLine; putStr str} is a shorthand for
 \inlinehs{getLine >>= (\str -> putStr str)}
 }
 But from a practical standpoint, there is only a little difference between a monad state
@@ -1748,7 +1766,7 @@ In the same way that an object stored in a single variable is changed, a monad s
 can change without any outer signs. Listing~\ref{lst:state} shows how similar in appearance
 are the main game loops of hAsteroids and imp-asteroids.
 
-\begin{listing}
+\begin{listing}[H]
 \begin{haskell}
 -- gameLoop returns SystemWithResources ()
 reactToInput deltaTime
@@ -1766,7 +1784,7 @@ pGame->draw(*pUI);
 \end{listing}
 
 This brings us to the argument of why we want to avoid mutability in the first place.
-Mutability makes code harder to reason about, easier to make mistakes in and
+Mutability makes code harder to reason about, easier to make mistakes in, and
 very difficult to run in parallel. Granted, since the state monad is technically
 pure, the hidden syntax will not allow shared mutability,
 which is what makes parallel systems complicated.
@@ -1782,46 +1800,46 @@ We discuss this need for balance later, in Section~\ref{sect:dilemmas} about the
 \subsection{Code statistics}
 \label{sect:codestats}
 
-As a bonus we include few simple statistics about code length.
+As a bonus, we include few simple statistics about code length.
 We counted the lines, words\footnote{
-\mintinline{console}{wc} defines word
+\mintinline{console}{wc} defines a word
 as a sequence of any printable characters delimited by white space.
 }
 and characters using the \mintinline{console}{wc} command.
 Then we plotted the total line counts (Figure~\ref{fig:codelength}) and
-ratios between words, lines and characters in each file (Figure~\ref{fig:codedensity})
+ratios between words, lines, and characters in each file (Figure~\ref{fig:codedensity})
 using Python and \packagename{seaborn}. We must take into account the differences between
 the implementations because imp-asteroids uses a custom drawing library
-built around GLUT, which includes several lengthy line drawing functions and
-it is much more heavily commented\footnote{
+built around GLUT, which includes several lengthy line-drawing functions and
+it is much more heavily commented,\footnote{
 Using \mintinline{console}{grep} we found 850 lines of comments in the imp-asteroids project
 and only 110 and 50 in hAsteroids and pure-asteroids.
 }
-, but it also does not implement UFOs, score, ship lives or menus.
+but it also does not implement UFOs, score, ship lives, or menus.
 
-\begin{figure}
+\begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{images/total_lines_by_project.png}
+    \includegraphics[width=0.9 \textwidth]{images/total_lines_by_project.png}
     % \includegraphics[width=0.49 \textwidth]{images/total_words_by_project.png}
     % \includegraphics[width=0.49 \textwidth]{images/total_chars_by_project.png}
     \caption{Total number of lines by project.}
     \label{fig:codelength}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{images/lwc_density_by_project.png}
     \caption{Code density by project.}
     \label{fig:codedensity}
 \end{figure}
 
-From the ratios in Figure~\ref{fig:codedensity} we see that the code has similar density,
-therefore we know it is not shorter lines inflating the total line count, but generally longer code.
+From the ratios in Figure~\ref{fig:codedensity}, we see that the codebases have a similar density;
+therefore, we know it is not shorter lines inflating the total line count, but generally longer code.
 This further supports the claim for Haskell's ability to be brief and concise.
-We can also notice the slight, opposite tendencies of words per lines and characters per words.
-It would appear that in the \cpp{} code, words are longer and there is less of them per line,
+We can also notice the slight, opposite tendencies of words per line and characters per word.
+It would appear that in the \cpp{} code, words are longer, and there are fewer of them per line,
 which can be explained by \mintinline{console}{wc} understanding strings like
-\inlinecpp{asteroids.erase(it);} as one word as are understood also operators, more frequent in Haskell.
+\inlinecpp{asteroids.erase(it);} as one word as are also understood operators, more frequent in Haskell.
 
 % ----------------------------------------------------------
 % \subsection{pure-asteroids \vs hAsteroids}
@@ -1884,22 +1902,18 @@ with polymorphous arguments, making code more useful while staying safe.
 
 We have criticized both of our own implementations for the way they model state
 and pass along resources or access to \inlinehs{IO}. In Listing~\ref{lst:dreamdesign},
-we can see a much better modular design suggestion with a usage example in Listing~\ref{lst:usedream}.
-The monad that allows functions to access any of its contents and perform I/O
+we can see a much better modular design suggestion, with types of the functions
+using it in Listing~\ref{lst:usedream}. The complete working toy example
+can be found in Appendix~\ref{app:classes}.
+The main reader monad \inlinehs{WithResources} that allows functions
+to access any of its contents and perform I/O
 is restricted through polymorphism when subfunctions are called.
 Constraints can be added to a function's type to grant access to more of the state or
 or removed to limit it. Moreover, the \inlinehs{Resources} type and the typeclasses
 could be expanded to accommodate for more resources.
 
-% maybe put this into an appendix?
 \begin{listing}
 \begin{haskell}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-
-import Control.Monad.IO.Class
-import Control.Monad.Reader
-
 class MonadReader r m => TexturesReader r m where
     askForTextures :: m Textures
 
@@ -1908,8 +1922,6 @@ class MonadReader r m => RandomReader r m where
 
 type WithResources a = ReaderT Resources IO a
 
-type Textures = String
-type RandGen = [Int]
 data Resources =
     Res
     { textures :: Textures
@@ -1928,34 +1940,11 @@ instance Monad m => RandomReader Resources (ReaderT Resources m) where
 
 \begin{listing}
 \begin{haskell}
-newtype World = World Int deriving Show
-
-main :: IO ()
-main = do
-    let world = World 10
-    let resources = Res  
-            { textures = "Current world state: "
-            , random = [4, 2]
-            }
-    runReaderT (game world) resources  
-
-game :: World -> WithResources ()
-game w = do
-    newW <- step w
-    draw w
-    quit <- liftIO $ getLine
-    unless (quit == "q") $
-        game newW
+gameLoop :: World -> WithResources ()
 
 step :: (RandomReader r m) => World -> m World
-step (World state)= do
-    rand <- head <$> askForRandom
-    return $ World $ state + rand
 
 draw :: (MonadIO m, TexturesReader r m) => World -> m ()
-draw w = do
-    t <- askForTextures
-    liftIO $ putStrLn $ t ++ show w
 \end{haskell}
 \caption{Modular reader monad usage example.}
 \label{lst:usedream}
@@ -1972,7 +1961,7 @@ using the \inlinehs{MonadIO} class, which \inlinehs{ReaderT r IO} already has an
 \subsection{Abstraction \vs explicitness}
 
 In the previous subsection, we have already mentioned abstraction as the means
-of gaining flexibility --- excessive abstraction results in too much flexibility,
+of gaining flexibility. Excessive abstraction results in too much flexibility,
 as seen in hAsteroids. Conversely, too much explicitness leads to a lack of flexibility,
 as seen in pure-asteroids.
 
@@ -2010,7 +1999,7 @@ it could be highly beneficial to process it in parallel.
 
 \footnotetext{Philip Wadler speaks more on
 \say{combining the indulgences of impurity with the blessings of purity}
-by using monads in his paper \textit{Comprehending Monads}.\cite{wadlermonads}}
+by using monads in his paper \textit{Comprehending Monads} \cite{wadlermonads}.}
 % https://ncatlab.org/nlab/files/WadlerMonads.pdf
 
 On the other hand, things like the state of a random number generator or other resources
@@ -2031,7 +2020,7 @@ While the other is obscurer and returns nothing but monadic effects.
 At last, we admit that this is to an extent a matter of personal taste
 and that some may prefer the effectful approach, despite what we have argued.\footnote{
 An example of such an approach can be seen in the Dino Rush game,
-described in the blog post \emph{A Game in Haskell - Dino Rush}\cite{dinorush} mentioned
+described in the blog post \emph{A Game in Haskell - Dino Rush} \cite{dinorush} mentioned
 previously in Section~\ref{sect:existing}.
 }
 
@@ -2059,7 +2048,7 @@ previously in Section~\ref{sect:existing}.
 % with Haskell the upfront cost is higher but the system produced is more likely to be of high quality
 
 % We have rediscovered that Haskell can be very imperative, as explained by Simon P.~Jones and
-% Philip Wadler in their paper \textit{Imperative Functional Programming}.\cite{imperativefp}
+% Philip Wadler in their paper \textit{Imperative Functional Programming}. \cite{imperativefp}
 % % https://www.microsoft.com/en-us/research/wp-content/uploads/1993/01/imperative.pdf
 % % https://youtu.be/re96UgMk6GQ?t=2089
 % In that paper, they described for the first time, how monads could be used for input/output operations
@@ -2100,8 +2089,7 @@ and showed how Haskell's typeclasses could be used together with monads
 to achieve the desired balance.
 
 We have rediscovered that Haskell can be very imperative, as explained by Simon P.~Jones
-and Philip Wadler in their paper \textit{Imperative Functional Programming}.\cite{imperativefp}
-% https://www.microsoft.com/en-us/research/wp-content/uploads/1993/01/imperative.pdf
+and Philip Wadler in their paper \textit{Imperative Functional Programming} \cite{imperativefp}.
 In that paper, they described for the first time how monads could be used for input/output
 operations in lazy languages and confirmed what we see as the result in hAsteroids --- with the
 \inlinehs{IO} monad, Haskell can very closely resemble C. Yet, it keeps the
@@ -2163,10 +2151,88 @@ how it would compare to the data-oriented design of apecs as the entity counts g
 % ====================================
 \appendix %% Start the appendices.
 
-\chapter{Example of modular monad design using typeclasses}
+
+
+\chapter{Electronic attachments}
+\label{app:attach}
+
+The implementations described in this thesis are attached with it
+in an archive file. The contents of the archive are outlined here:
+\medskip
+\dirtree{%
+.1 implementations.
+.2 hAsteroids\DTcomment{the hAsteroids project root}.
+.3 app.
+.4 Main.hs\DTcomment{the entry point}.
+.3 resources\DTcomment{textures and fonts}.
+.3 src\DTcomment{library modules}.
+.3 package.yaml\DTcomment{package details including dependencies}.
+.3 stack.yaml\DTcomment{stack configuration}.
+.2 pure-asteroids\DTcomment{the pure-asteroids project root}.
+.3 app.
+.4 Main.hs\DTcomment{the entry point}.
+.3 resources\DTcomment{fonts}.
+.3 src\DTcomment{library modules}.
+.3 package.yaml\DTcomment{package details including dependencies}.
+.3 stack.yaml\DTcomment{stack configuration}.
+.2 README.md\DTcomment{readme file from the GitHub repository}.
+}
+\medskip
+\noindent The build instructions are provided in the following appendix.\\
+Latest version of projects can be found at \url{https://github.com/honzaflash/ba-thesis}.
+
+
+\chapter{Build instructions}
+The build process for both hAsteroids and pure-asteroids is very similar.
+The following requirements must be met first.
+\newcommand{\requirementitem}[1]{\noindent\textbf{#1}}
+
+\medskip
+\requirementitem{Haskell Tool Stack}
+\begin{itemize}[\indent]
+    \item Both games are projects managed using the Haskell Tool Stack;\footnote{
+    About \mintinline{console}{stack}: \url{https://docs.haskellstack.org/en/stable/README/}
+    } therefore, \mintinline{console}{stack} needs to be installed.
+    We recommend running \mintinline{console}{stack upgrade} before attempting the build.
+\end{itemize}
+
+\requirementitem{SDL libraries}
+\begin{itemize}[\indent]
+    \item The used Haskell SDL bindings require the C libraries to be installed.
+    Specifically, both projects need SDL and SDL\_ttf, and hAsteroids also uses SDL\_image 
+    \item To install all three on Ubuntu, you can use this command:
+    \begin{term}
+    sudo apt install libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev
+    \end{term}
+    
+    \item To install all three on Windows with the help of \mintinline{console}{stack}:
+    \begin{term}
+    stack exec -- pacman -S mingw64/mingw-w64-x86_64-pkg-config mingw64/mingw-w64-x86_64-SDL2 mingw64/mingw-w64-x86_64-SDL2_ttf mingw64/mingw-w64-x86_64-SDL2_image
+    \end{term}
+\end{itemize}
+
+\requirementitem{Operating System}
+\begin{itemize}[\indent]
+    \item Stack and SDL support Linux, Windows, and Mac~OS.
+    The build was tested on Ubuntu~20.04 and Windows~10 build~19042.
+\end{itemize}
+
+\noindent With that, we can run \mintinline{console}{stack build} in the project's root directory.
+This may take a while as \mintinline{console}{stack} downloads and installs all the dependencies.
+To launch the game when project is built successfully,
+execute \mintinline{console}{stack run} or \mintinline{console}{stack exec <name-of-the-executable>},
+again, in the project's root directory.
+We were unable to make \mintinline{console}{stack exec} work on Windows, so alternatively,
+we can run \mintinline{console}{stack ghci} and then run the \inlinehs{main} function in GHCi.
+
+
+
+\chapter{Additional code examples}
+
+\section{Example of modular monad design using typeclasses}
 \label{app:classes}
 
-Here we list a working toy-scale example, implementing the modular design
+Here we list a working toy example, implementing the modular design
 we outlined at the end of Section~\ref{sect:dilemmas}.
 
 \begin{minted}[breaklines, linenos]{haskell}
@@ -2207,19 +2273,22 @@ main = do
             { textures = "Current world state: "
             , random = [4, 2]
             }
-    runReaderT (game world) resources  
+    runReaderT (gameLoop world) resources  
 
-game :: World -> WithResources ()
-game w = do
+gameLoop :: World -> WithResources ()
+gameLopo w = do
     newW <- step w
     draw w
     quit <- liftIO $ getLine
     unless (quit == "q") $
-        game newW
+        gameLoop newW
 
 step :: (RandomReader r m) => World -> m World
 step (World state)= do
     rand <- head <$> askForRandom
+    -- performing I/O is illegal because 'm'
+    -- does not have the MonadIO constraint on it
+    -- liftIO $ putStrLn "C is the superior language"
     return $ World $ state + rand
 
 draw :: (MonadIO m, TexturesReader r m) => World -> m ()
@@ -2230,140 +2299,51 @@ draw w = do
 \end{minted}
 
 
-
-
-
-\chapter{More examples of functional elegance}
+\pagebreak
+\section{More examples of functional elegance}
 \label{app:elegance}
-maybe?\\
-compile a bunch of things that are just "nice"
+Here we list a few more examples of elegant, concise code from our implementations.
 
+\bigskip
+\noindent No need for explicit iteration when loading textures:
+\hrule
+\begin{haskell}
+loadTextures :: SDL.Renderer -> IO Textures
+loadTextures r = ioOrDie "Failed to load textures" $
+    HM.fromList <$> mapM mapPathToTexture keyPathList
+    where
+        mapPathToTexture = mapM (IMG.loadTexture r)
+\end{haskell}
 
+\bigskip
+\noindent More map usage with partially evaluated functions:
+\hrule
+\begin{haskell}
+-- | Calculates the ship vertices' positions
+shipPoints :: Ship -> [V2 Double]
+shipPoints s =
+    map (+ sPos)
+        [ -17 *^ (facing - perp facing) -- left
+        ,  25 *^  facing                -- front tip
+        , -17 *^ (facing + perp facing) -- right
+        , -8  *^  facing                -- back point
+        ]
+    where
+        sPos = s ^. sPosition . pVect
+        facing = angle $ s ^. sAngle
+\end{haskell}
 
-
-\chapter{Data about code length}
-
-\mintinline{console}{wc --help}: \say{A word is a non-zero-length sequence
-of characters delimited by white space}
-
-hAsteroids:
-\begin{term}
-~/ba-thesis/hAsteroids$ wc -lwm src/*.hs app/Main.hs
-  207   844  6609 src/Collisions.hs
-  185   717  5380 src/Components.hs
-  135   437  3551 src/Draw.hs
-   46   165  1229 src/GameLoop.hs
-   64   227  1854 src/Initialize.hs
-  132   647  4811 src/Input.hs
-  245   803  7054 src/Resources.hs
-   57   219  1603 src/SdlWrappers.hs
-  175   874  5969 src/Step.hs
-   99   356  2583 src/Utility.hs
-   67   172  1540 app/Main.hs
- 1412  5461 42183 total
-\end{term}
-
-pure-asteroids:
-\begin{term}
-~/ba-thesis/pure-asteroids$ wc -lwm src/*.hs src/Step/*.hs app/Main.hs
-  149   635  4327 src/Draw.hs
-   95   350  3017 src/EventProcessing.hs
-  109   404  3631 src/GameLoop.hs
-   58   203  1509 src/Initialize.hs
-   85   384  2859 src/Input.hs
-  114   381  3334 src/Resources.hs
-   56   221  1862 src/Step.hs
-  197   578  3975 src/Types.hs
-   89   306  2013 src/Utility.hs
-   17    41   315 src/Step/Asteroids.hs
-  124   571  4467 src/Step/Bullets.hs
-   18    87   515 src/Step/Common.hs
-   24    63   468 src/Step/Score.hs
-  136   667  4754 src/Step/Ship.hs
-  109   540  3630 src/Step/Ufos.hs
-   50   123  1167 app/Main.hs
- 1430  5554 41843 total
-\end{term}
-
-Asteroids by Jason Halverson:
-\begin{term}
-~/Asteroids$ wc -lwm *.cpp
-  195   376  5416 asteroids.cpp
-   78   182  2133 bullet.cpp
-   45   163  1303 driver.cpp
-  141   278  3043 flyingObject.cpp
-  531  1549 14674 game.cpp
-   67   197  1662 point.cpp
-   98   228  2218 ship.cpp
-  712  2805 22545 uiDraw.cpp
-  331  1355 11533 uiInteract.cpp
-   38    80   602 velocity.cpp
- 2236  7213 65129 total
-
-~/Asteroids$ wc -lwm *.h
-  105   196  2327 asteroids.h
-   36    81   790 bullet.h
-   60   127  1384 flyingObject.h
-  103   261  2938 game.h
-   48   159  1302 point.h
-   63   126  1227 ship.h
-  135   580  5979 uiDraw.h
-  133   644  5045 uiInteract.h
-   29    62   626 velocity.h
-  712  2236 21618 total
-
-~/Asteroids$ wc -lwm *.h *.cpp | grep total
- 2948  9449 86747 total
-\end{term}
-
-
-
-\chapter{Electronic attachments}
-attachments structure and description
-
-
-\chapter{Build instructions}
-The build process for both hAsteroids and pure-asteroids is very similar.
-The following requirements must be met first.
-\newcommand{\requirementitem}[1]{\noindent\textbf{#1}}
-
-\medskip
-\requirementitem{Haskell Tool Stack}
-\begin{itemize}[\indent]
-    \item Both games are projects managed using the Haskell Tool Stack;\footnote{
-    About \mintinline{console}{stack}: \url{https://docs.haskellstack.org/en/stable/README/}
-    } therefore, \mintinline{console}{stack} needs to be installed.
-    We recommend running \mintinline{console}{stack upgrade} before attempting the build.
-\end{itemize}
-
-\requirementitem{SDL libraries}
-\begin{itemize}[\indent]
-    \item The used Haskell SDL bindings require the C libraries to be installed.
-    Specifically, both projects need SDL and SDL\_ttf, and hAsteroids also uses SDL\_image 
-    \item To install all three on Ubuntu, you can use this command:
-    \begin{term}
-    sudo apt install libsdl2-dev libsdl2-ttf-dev libsdl2-image-dev
-    \end{term}
-    
-    \item To install all three on Windows with the help of \mintinline{console}{stack}:
-    \begin{term}
-    stack exec -- pacman -S mingw64/mingw-w64-x86_64-pkg-config mingw64/mingw-w64-x86_64-SDL2 mingw64/mingw-w64-x86_64-SDL2_ttf mingw64/mingw-w64-x86_64-SDL2_image
-    \end{term}
-\end{itemize}
-
-\requirementitem{Operating System}
-\begin{itemize}[\indent]
-    \item Stack and SDL support Linux, Windows, and Mac~OS.
-    However, the build was tested only on Ubuntu~20.04 and Windows~10 build~19042.
-\end{itemize}
-
-\noindent With that, we can run \mintinline{console}{stack build} in the game's root directory.
-This may take a while as \mintinline{console}{stack} downloads and installs all the dependencies.
-To launch the game when project is built successfully,
-execute \mintinline{console}{stack run} or \mintinline{console}{stack exec <name-of-the-executable>}.
-We were unable to make \mintinline{console}{stack exec} work on Windows, so alternatively,
-we can run \mintinline{console}{stack ghci} and then run the \inlinehs{main} function in GHCi.
-
+\bigskip
+\noindent Drawing an arbitrary number of textures with text stacked vertically,
+utilizing laziness and list comprehension:
+\hrule
+\begin{haskell}
+drawCenteredTexts :: SDL.Renderer -> Texts -> [TextKey] -> IO ()
+drawCenteredTexts renderer texts =
+    zipWithM_
+        (drawCenteredText renderer texts)
+        [100 * i | i <- [2..]]
+\end{haskell}
 
 
 \end{document}
