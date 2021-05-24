@@ -97,7 +97,7 @@
     medium = {online},
     accessed = {2021-05-01},
     urldate = {2021-05-01},
-    URL = {},
+    URL = {http://hackage.haskell.org/package/gloss},
     langid = {english},
 }
 
@@ -256,9 +256,10 @@
 % --- scholarly articles
 
 % Why Functional Programming Matters
-@ONLINE{whyfpmatters,
+@ARTICLE{whyfpmatters,
     author = {John Hughes},
     title = {Why Functional Programming Matters},
+    crossref = {pcjournal},
     % journal = {The Computer Journal},
     % volume = {32},
     % number = {2},
@@ -271,33 +272,51 @@
     eprint = {https://academic.oup.com/comjnl/article-pdf/32/2/98/1445644/320098.pdf},
     urldate = {2021-04-25}
 }
+@PERIODICAL{pcjournal,
+  journaltitle = {The Computer Journal},
+  date         = {1989},
+  volume       = {32},
+  number       = {2},
+  issn         = {0010-4620},
+  langid       = {english},
+}
 
 % Monads for functional programming
-@ONLINE{wadlermonads,
+@INCOLLECTION{wadlermonads,
     title={Monads for functional programming},
     author={Wadler, Philip},
-    % booktitle={International School on Advanced Functional Programming},
-    % pages={24--52},
+    crossref={advancedfp},
+    pages={24-52},
     year={1995},
     url = {http://staff.um.edu.mt/afra1/seminar/monads.pdf},
     urldate = {2021-05-15}
 }
+@COLLECTION{advancedfp,
+    title     = {Advanced Functional Programming},
+    date      = {1995},
+    location  = {Berlin, Heidelberg},
+    isbn = {978-3-540-59451-2},
+    % doi = {10.1007/3-540-59451-5_2},
+    publisher = {Springer},
+    langid    = {english}
+}
 
 % Imperative Functional Programming
-@ONLINE{imperativefp,
+@inproceedings{imperativefp,
     author = {Peyton Jones, Simon L. and Wadler, Philip},
     title = {Imperative Functional Programming},
     year = {1993},
-    % isbn = {0897915607},
-    % publisher = {Association for Computing Machinery},
-    % address = {New York, NY, USA},
-    % doi = {10.1145/158511.158524},
-    % pages = {71–84},
-    % numpages = {14},
-    % location = {Charleston, South Carolina, USA},
-    % series = {POPL '93},
-    % url = {https://doi.org/10.1145/158511.158524},
-    ulr = {https://www.microsoft.com/en-us/research/wp-content/uploads/1993/01/imperative.pdf},
+    isbn = {0897915607},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/158511.158524},
+%     ulr = {https://www.microsoft.com/en-us/research/wp-content/uploads/1993/01/imperative.pdf},
+    doi = {10.1145/158511.158524},
+    booktitle = {Proceedings of the 20th ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages},
+    pages = {71–84},
+    numpages = {14},
+    location = {Charleston, South Carolina, USA},
+    series = {POPL '93},
     urldate = {2021-05-15}
 }
 

@@ -374,9 +374,7 @@ which wraps around the low-level binding, abstracting from the pointers,
 replacing them with Haskell's \inlinehs{Maybe},
 and throwing an error instead of returning a negative value.
 
-\begin{listing}[H]
-\caption{Example of FFI binding \cite{sdlrepo}.}
-\label{lst:ffi}
+\begin{listing}
 \begin{haskell}
 -- the C function (https://wiki.libsdl.org/SDL_RenderCopy):
 -- int SDL_RenderCopy(SDL_Renderer * renderer,
@@ -400,6 +398,8 @@ copy :: MonadIO m
      -> Maybe (Rectangle CInt)
      -> m ()
 \end{haskell}
+\caption{Example of FFI binding \cite{sdlrepo}.}
+\label{lst:ffi}
 \end{listing}
 
 
@@ -415,7 +415,7 @@ We chose Asteroids as an example because its world comprises only
 a few object types, yet their relationships make the game quite interesting.
 It also does not rely on complex graphics, therefore we can focus
 on the code implementing the game rules and behaviors.
-\begin{figure}
+\begin{figure}[H]
     \begin{minipage}{0.33\textwidth}
         \includegraphics[height=1.3\textwidth]{images/Asteroids-arcadegame.jpg}\hfill
     \end{minipage}
@@ -559,13 +559,11 @@ shown in the Listing~\ref{lst:cmaps}. They are the means of altering the world s
 cmap :: forall w m cx cy.
     (Get w m cx, Members w m cx, Set w m cy) =>
     (cx -> cy) -> SystemT w m ()
-
 -- | Monadically iterates over all entities
 --   with a cx, and writes their cy.
 cmapM :: forall w m cx cy.
     (Get w m cx, Set w m cy, Members w m cx) =>
     (cx -> SystemT w m cy) -> SystemT w m ()
-
 -- | Monadically iterates over all entities with a cx
 cmapM_ :: forall w m c.
     (Get w m c, Members w m c) =>
@@ -586,20 +584,20 @@ Furthermore, with \inlinehs{cmaM_} there is no direct writing, only side effects
 
 \section{Writing of hAsteroids}
 
-\begin{figure}[hbt!]
-    \centering
-    \includegraphics[width=0.8 \textwidth]{images/hasteroids-screenshot.jpg}
-    \caption{A screenshot of hAsteroids gameplay.}
-    \label{fig:hasteroidsscreenshot}
-\end{figure}
-
-\noindent In this section, we outline how we used apecs in the hAsteroids game.
+In this section, we outline how we used apecs in the hAsteroids game.
 For the exact implementation, please refer to the attached source files
 in the hAsteroids directory.\footnote{
 Attachment structure is briefly described in Appendix~\ref{app:attach}.}
 Figure~\ref{fig:hasteroidsmodules} shows project's modules with loosely indicated
 dependencies --- upper modules may have direct dependencies on the lower modules,
 arrows show most important ones.
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=0.7 \textwidth]{images/hasteroids-screenshot.jpg}
+    \caption{A screenshot of hAsteroids gameplay.}
+    \label{fig:hasteroidsscreenshot}
+\end{figure}
+
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/modules.png}
@@ -905,7 +903,7 @@ and destruction.
 
 \begin{figure}[hbt!]
     \centering
-    \includegraphics[height=5cm]{images/pure-screenshot.png}
+    \includegraphics[width=0.6 \textwidth]{images/pure-screenshot.png}
     \caption{A screenshot of pure-asteroids gameplay.}
     \label{fig:pureasteroidsscreenshot}
 \end{figure}
@@ -926,14 +924,14 @@ through \inlinehs{stepWorld}, which simulates physics and game rules and generat
 \inlinehs{drawScene} draws it and \inlinehs{resetIfNewGame} returns a reinitialized
 world only if the loop state is transitioning from \inlinehs{InMenu} to \inlinehs{Playing}.
 This is illustrated in Figure~\ref{fig:worldeventsflow}.
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{images/world-flow-detailed.png}
-    \caption{Data flow of \inlinehs{gameLoop}.}
-    \label{fig:worldeventsflow}
-\end{figure}
 Next, we describe the used \textbf{data structures} and then explain
 how the \textbf{stepper function} and \textbf{event processing} use them.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{images/world-flow-detailed.png}
+    \caption{Data flow of \inlinehs{gameLoop} in pure-asteroids.}
+    \label{fig:worldeventsflow}
+\end{figure}
 % \begin{figure}
 %     \centering
 %     \includegraphics[width=\textwidth]{images/world-flow-basic.png}
@@ -1001,6 +999,7 @@ data ShipState
 \caption{The \inlinehs{Ship} representation in pure-asteroids.}
 \label{lst:pureship}
 \end{listing}
+\pagebreak
 
 Listing~\ref{lst:events} shows the event package type \inlinehs{WorldEvents}.
 It also has an instance of \inlinehs{Monoid}, which allows us to collect the packages from
